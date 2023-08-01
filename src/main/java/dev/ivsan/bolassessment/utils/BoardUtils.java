@@ -18,6 +18,19 @@ public class BoardUtils {
         ).collect(Collectors.toList());
     }
 
+    public static String encodeBoardState(Board board) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(board.isNorthTurn() ? 0 : 1).append("-");
+        for (Pit pit : board.getSouthPits()) {
+            builder.append(pit.getStones()).append(".");
+        }
+        builder.append("-");
+        for (Pit pit : board.getNorthPits()) {
+            builder.append(pit.getStones()).append(".");
+        }
+        return builder.toString();
+    }
+
     public static String getVisualRepresentation(Board board) {
         return String.format("North Player: %s%s%n", board.getNorthPlayer().getNickname(),
                 board.isNorthTurn() ? ", your turn!" : "") +
@@ -33,23 +46,14 @@ public class BoardUtils {
             builder.append("    ");
         }
         List<Pit> pits = drawNorth ? board.getNorthPits() : board.getSouthPits();
-        for (Pit pit : pits) {
+        for (int i = 0; i < pits.size(); i++) {
+            int pointer = drawNorth ? pits.size() - i - 1 : i;
+            Pit pit = pits.get(pointer);
             if (Pit.PitType.REGULAR == pit.getType()) {
-                if (drawNorth) {
-                    builder.append(")").append(pit.getStones()).append("(");
-                } else {
-                    builder.append("(").append(pit.getStones()).append(")");
-                }
+                builder.append("(").append(pit.getStones()).append(")");
             } else {
-                if (drawNorth) {
-                    builder.append("]").append(String.format("%02d", pit.getStones())).append("[");
-                } else {
-                    builder.append("[").append(String.format("%02d", pit.getStones())).append("]");
-                }
+                builder.append("[").append(String.format("%02d", pit.getStones())).append("]");
             }
-        }
-        if (drawNorth) {
-            builder.reverse();
         }
         builder.append(String.format("%n"));
         return builder.toString();
