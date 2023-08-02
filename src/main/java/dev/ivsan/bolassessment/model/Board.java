@@ -1,5 +1,9 @@
 package dev.ivsan.bolassessment.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import dev.ivsan.bolassessment.serializer.BoardDeserializer;
+import dev.ivsan.bolassessment.serializer.BoardSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +20,8 @@ import static dev.ivsan.bolassessment.utils.BoardUtils.initialPitsSetup;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonSerialize(using = BoardSerializer.class)
+@JsonDeserialize(using = BoardDeserializer.class)
 public class Board {
     @NonNull
     private Player northPlayer;

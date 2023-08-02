@@ -3,11 +3,13 @@ package dev.ivsan.bolassessment.service;
 import dev.ivsan.bolassessment.model.Board;
 import dev.ivsan.bolassessment.model.GameState;
 import dev.ivsan.bolassessment.model.Pit;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import static dev.ivsan.bolassessment.utils.BoardUtils.BOARD_PITS_LENGTH;
 
+@Service
 public class KalahaGameEngineImpl implements KalahaGameEngine {
     @Override
     public Board processMove(Board board, int pitIndex) {

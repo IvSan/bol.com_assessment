@@ -4,6 +4,7 @@ import dev.ivsan.bolassessment.model.Board;
 import dev.ivsan.bolassessment.model.Pit;
 import dev.ivsan.bolassessment.model.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,6 +18,14 @@ public class TestDataGenerator {
 
     public static Board aBoard() {
         return Board.builder().northPlayer(new Player("Bob")).southPlayer(new Player("Alice")).build();
+    }
+
+    public static Board aBoardWithSomeMoves() {
+        return Board.builder()
+                .northPlayer(new Player("Bob"))
+                .southPlayer(new Player("Alice"))
+                .moveLog(new ArrayList<>(List.of(1, 2, 3)))
+                .build();
     }
 
     public static Board singleMoveVictoryBoard() {
