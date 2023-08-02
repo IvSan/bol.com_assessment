@@ -1,6 +1,7 @@
 package dev.ivsan.bolassessment.service;
 
 import dev.ivsan.bolassessment.model.Board;
+import dev.ivsan.bolassessment.model.GameState;
 import dev.ivsan.bolassessment.model.Pit;
 
 import java.util.List;
@@ -10,14 +11,21 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
     public Board processMove(Board board, int pitIndex) {
         validateMove(board, pitIndex);
         makeMove(board, pitIndex);
-        // TODO Check for victory
+        checkForVictory(board);
         return board;
     }
 
     private void validateMove(Board board, int pitIndex) {
+        if (GameState.IN_PROGRESS != board.getState()) {
+            throw new IllegalStateException("Invalid move, game has been played till the end");
+        }
+
         List<Pit> pits = board.isNorthTurn() ? board.getNorthPits() : board.getSouthPits();
         if (pitIndex < 0 || pitIndex >= pits.size() - 1) {
             throw new IllegalArgumentException("Invalid move, pit index cannot be " + pitIndex);
+        }
+        if (pits.get(pitIndex).getStones() <= 0) {
+            throw new IllegalArgumentException("Invalid move, chosen pit is empty, pit index cannot be" + pitIndex);
         }
     }
 
@@ -37,5 +45,32 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
             pits.get(pointer).setStones(pits.get(pointer).getStones() + 1);
             pointer++;
         }
+    }
+
+    private void checkForVictory(Board board) {
+        if (areAllSmallPitsEmpty(board.getNorthPits()) || areAllSmallPitsEmpty(board.getSouthPits())) {
+            int northScores = getScoreFromBigPit(board.getNorthPits());
+            int southScores = getScoreFromBigPit(board.getSouthPits());
+            if (northScores > southScores) {
+                board.setState(GameState.NORTH_WIN);
+            } else if (northScores < southScores) {
+                board.setState(GameState.SOUTH_WIN);
+            } else {
+                board.setState(GameState.TIE);
+            }
+        }
+    }
+
+    private boolean areAllSmallPitsEmpty(List<Pit> pits) {
+        return pits.stream()
+                .filter(pit -> Pit.PitType.REGULAR == pit.getType())
+                .allMatch(pit -> pit.getStones() <= 0);
+    }
+
+    private int getScoreFromBigPit(List<Pit> pits) {
+        return pits.stream()
+                .filter(pit -> Pit.PitType.BIG == pit.getType())
+                .findAny().orElseThrow(() -> new IllegalStateException("Player has no BIG pit, game state is invalid"))
+                .getStones();
     }
 }
