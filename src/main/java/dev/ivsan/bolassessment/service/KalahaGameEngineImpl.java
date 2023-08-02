@@ -33,18 +33,18 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
         }
     }
 
-    private void makeMove(Board board, int pitIndex) {
-        board.getMoveLog().add(pitIndex);
-        List<Pit> pits = board.isNorthTurn() ? board.getNorthPits() : board.getSouthPits();
-        int stonesToSow = pits.get(pitIndex).getStones();
-        pits.get(pitIndex).setStones(0);
+    private void makeMove(Board board, int pickedPitIndex) {
+        board.getMoveLog().add(pickedPitIndex);
+        List<Pit> ownPits = board.isNorthTurn() ? board.getNorthPits() : board.getSouthPits();
+        int stonesToSow = ownPits.get(pickedPitIndex).getStones();
+        ownPits.get(pickedPitIndex).setStones(0);
 
-        int pointer = pitIndex + 1;
+        int pointer = pickedPitIndex + 1;
         while (stonesToSow > 0) {
             boolean isSowingOnOwnSide = pointer / BOARD_PITS_LENGTH % 2 == 0;
-            pits = isSowingOnOwnSide ^ board.isNorthTurn() ? board.getSouthPits() : board.getNorthPits();
+            ownPits = isSowingOnOwnSide ^ board.isNorthTurn() ? board.getSouthPits() : board.getNorthPits();
             int ownPitIndex = pointer % BOARD_PITS_LENGTH;
-            Pit pointerPit = pits.get(ownPitIndex);
+            Pit pointerPit = ownPits.get(ownPitIndex);
             pointer++;
             if (Pit.PitType.BIG == pointerPit.getType() && !isSowingOnOwnSide)
                 continue; // Skip opponent's big pit while sowing
@@ -59,8 +59,8 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
                     List<Pit> opponentPits = board.isNorthTurn() ? board.getSouthPits() : board.getNorthPits();
                     int stonesFromOpponentPit = opponentPits.get(oppositePitIndex).getStones();
                     opponentPits.get(oppositePitIndex).setStones(0);
-                    pits.get(BOARD_PITS_LENGTH - 1).setStones(
-                            pits.get(BOARD_PITS_LENGTH - 1).getStones() + stonesFromOpponentPit + 1
+                    ownPits.get(BOARD_PITS_LENGTH - 1).setStones(
+                            ownPits.get(BOARD_PITS_LENGTH - 1).getStones() + stonesFromOpponentPit + 1
                     );
                 }
             }
