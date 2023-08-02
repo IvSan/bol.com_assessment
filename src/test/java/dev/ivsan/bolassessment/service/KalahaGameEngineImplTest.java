@@ -22,7 +22,7 @@ class KalahaGameEngineImplTest {
     private final KalahaGameEngine kalahaGameEngine = new KalahaGameEngineImpl();
 
     @Test
-    void shouldProcessMoves() {
+    void shouldProcessAndLogMoves() {
         Board board = aBoard();
         kalahaGameEngine.processMove(board, 1);
         assertEquals("0-6.0.7.7.7.7.1.-7.6.6.6.6.6.0.", encodeBoardState(board));
@@ -35,6 +35,7 @@ class KalahaGameEngineImplTest {
         kalahaGameEngine.processMove(board, 4);
         assertEquals("0-7.0.7.7.0.1.3.-9.1.10.9.9.8.1.", encodeBoardState(board));
         assertEquals(GameState.IN_PROGRESS, board.getState());
+        assertEquals(List.of(1, 1, 5, 1, 4), board.getMoveLog());
     }
 
     @Test

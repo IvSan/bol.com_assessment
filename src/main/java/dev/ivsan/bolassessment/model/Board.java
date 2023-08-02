@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,8 +30,12 @@ public class Board {
     private List<Pit> southPits = initialPitsSetup();
 
     private boolean isNorthTurn;
+    @NonNull
     @Builder.Default
     private GameState state = GameState.IN_PROGRESS;
+    @NonNull
+    @Builder.Default
+    private List<Integer> moveLog = new ArrayList<>();
 
     @NonNull
     @Builder.Default

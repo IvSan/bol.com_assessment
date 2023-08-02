@@ -32,6 +32,7 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
     }
 
     private void makeMove(Board board, int pitIndex) {
+        board.getMoveLog().add(pitIndex);
         List<Pit> pits = board.isNorthTurn() ? board.getNorthPits() : board.getSouthPits();
         int stonesToSow = pits.get(pitIndex).getStones();
         pits.get(pitIndex).setStones(0);
