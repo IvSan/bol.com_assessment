@@ -38,16 +38,16 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
 
         int pointer = pitIndex + 1;
         while (stonesToSow > 0) {
-            stonesToSow--;
             boolean isSowingOnOwnSide = pointer / BOARD_PITS_LENGTH % 2 == 0;
             pits = isSowingOnOwnSide ^ board.isNorthTurn() ? board.getSouthPits() : board.getNorthPits();
             Pit pointerPit = pits.get(pointer % BOARD_PITS_LENGTH);
             pointer++;
-            if (Pit.PitType.BIG == pointerPit.getType() && !isSowingOnOwnSide) {
-                stonesToSow++;
-                continue;
-            }
+            if (Pit.PitType.BIG == pointerPit.getType() && !isSowingOnOwnSide)
+                continue; // Skip opponent's big pit while sowing
+            stonesToSow--;
             pointerPit.setStones(pointerPit.getStones() + 1);
+            if (Pit.PitType.BIG == pointerPit.getType() && isSowingOnOwnSide && stonesToSow == 0)
+                return; // Turn ended in own big pit, get another turn
         }
 
         board.setNorthTurn(!board.isNorthTurn());
@@ -68,15 +68,10 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
     }
 
     private boolean areAllSmallPitsEmpty(List<Pit> pits) {
-        return pits.stream()
-                .filter(pit -> Pit.PitType.REGULAR == pit.getType())
-                .allMatch(pit -> pit.getStones() <= 0);
+        return pits.stream().filter(pit -> Pit.PitType.REGULAR == pit.getType()).allMatch(pit -> pit.getStones() <= 0);
     }
 
     private int getScoreFromBigPit(List<Pit> pits) {
-        return pits.stream()
-                .filter(pit -> Pit.PitType.BIG == pit.getType())
-                .findAny().orElseThrow(() -> new IllegalStateException("Player has no BIG pit, game state is invalid"))
-                .getStones();
+        return pits.stream().filter(pit -> Pit.PitType.BIG == pit.getType()).findAny().orElseThrow(() -> new IllegalStateException("Player has no BIG pit, game state is invalid")).getStones();
     }
 }

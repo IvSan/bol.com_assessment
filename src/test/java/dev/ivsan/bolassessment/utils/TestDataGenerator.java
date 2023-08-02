@@ -16,7 +16,7 @@ public class TestDataGenerator {
     }
 
     public static Board aBoard() {
-        return Board.builder().northPlayer(aPlayer()).southPlayer(aPlayer()).build();
+        return Board.builder().northPlayer(new Player("Bob")).southPlayer(new Player("Alice")).build();
     }
 
     public static Board singleMoveVictoryBoard() {

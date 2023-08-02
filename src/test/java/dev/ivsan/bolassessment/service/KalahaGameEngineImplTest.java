@@ -22,9 +22,8 @@ class KalahaGameEngineImplTest {
     private final KalahaGameEngine kalahaGameEngine = new KalahaGameEngineImpl();
 
     @Test
-    void testProcessMove() {
+    void shouldProcessMoves() {
         Board board = aBoard();
-        assertEquals("1-6.6.6.6.6.6.0.-6.6.6.6.6.6.0.", encodeBoardState(board));
         kalahaGameEngine.processMove(board, 1);
         assertEquals("0-6.0.7.7.7.7.1.-7.6.6.6.6.6.0.", encodeBoardState(board));
         kalahaGameEngine.processMove(board, 1);
@@ -39,26 +38,26 @@ class KalahaGameEngineImplTest {
     }
 
     @Test
-    void testProcessMoveInvalidPitIndex() {
+    void shouldNotProcessMoveWithInvalidPitIndex() {
         assertThrows(IllegalArgumentException.class, () -> kalahaGameEngine.processMove(aBoard(), -1));
         assertThrows(IllegalArgumentException.class, () -> kalahaGameEngine.processMove(aBoard(), BOARD_PITS_LENGTH - 1));
     }
 
     @Test
-    void testProcessMoveInvalidPitWithNoStones() {
+    void shouldNotProcessMoveWithInvalidPitWithNoStones() {
         assertThrows(IllegalArgumentException.class, () -> kalahaGameEngine.processMove(singleMoveVictoryBoard(), 1));
     }
 
     @Test
-    void testVictoryConditionsCheck() {
+    void shouldAchieveVictoryCondition() {
         Board board = singleMoveVictoryBoard();
         kalahaGameEngine.processMove(board, 5);
-        assertEquals("0-0.0.0.0.0.0.1.-6.6.6.6.6.6.0.", encodeBoardState(board));
+        assertEquals("1-0.0.0.0.0.0.1.-6.6.6.6.6.6.0.", encodeBoardState(board));
         assertEquals(GameState.SOUTH_WIN, board.getState());
     }
 
     @Test
-    void testSkipOpponentsBigPitWhileSowing() {
+    void shouldSkipOpponentsBigPitWhileSowing() {
         Board board = Board.builder()
                 .northPlayer(aPlayer())
                 .northPits(
@@ -80,6 +79,13 @@ class KalahaGameEngineImplTest {
                 .build();
         kalahaGameEngine.processMove(board, 5);
         assertEquals("0-1.1.1.0.0.0.1.-7.7.7.7.7.7.0.", encodeBoardState(board));
+    }
+
+    @Test
+    void shouldGetAnotherTurnWhenEndInOwnBigPit() {
+        Board board = aBoard();
+        kalahaGameEngine.processMove(board, 0);
+        assertEquals("1-0.7.7.7.7.7.1.-6.6.6.6.6.6.0.", encodeBoardState(board));
     }
 
 }

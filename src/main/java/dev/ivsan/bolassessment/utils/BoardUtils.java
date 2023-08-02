@@ -35,20 +35,20 @@ public class BoardUtils {
     public static String getVisualRepresentation(Board board) {
         return String.format("North Player: %s%s%n", board.getNorthPlayer().getNickname(),
                 board.isNorthTurn() ? ", your turn!" : "") +
-                drawBoardSide(board, true) +
-                drawBoardSide(board, false) +
+                getVisualRepresentationForOneSide(board, true) +
+                getVisualRepresentationForOneSide(board, false) +
                 String.format("South Player: %s%s%n", board.getSouthPlayer().getNickname(),
                         board.isNorthTurn() ? "" : ", your turn!");
     }
 
-    private static String drawBoardSide(Board board, boolean drawNorth) {
+    private static String getVisualRepresentationForOneSide(Board board, boolean getNorth) {
         StringBuilder builder = new StringBuilder();
-        if (!drawNorth) {
+        if (!getNorth) {
             builder.append("    ");
         }
-        List<Pit> pits = drawNorth ? board.getNorthPits() : board.getSouthPits();
+        List<Pit> pits = getNorth ? board.getNorthPits() : board.getSouthPits();
         for (int i = 0; i < pits.size(); i++) {
-            int pointer = drawNorth ? pits.size() - i - 1 : i;
+            int pointer = getNorth ? pits.size() - i - 1 : i;
             Pit pit = pits.get(pointer);
             if (Pit.PitType.REGULAR == pit.getType()) {
                 builder.append("(").append(String.format("%1$2s", pit.getStones())).append(")");
