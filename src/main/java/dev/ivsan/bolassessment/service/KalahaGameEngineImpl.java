@@ -57,9 +57,9 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
     }
 
     private void checkForVictory(Board board) {
-        if (areAllSmallPitsEmpty(board.getNorthPits()) || areAllSmallPitsEmpty(board.getSouthPits())) {
-            int northScores = getScoreFromBigPit(board.getNorthPits());
-            int southScores = getScoreFromBigPit(board.getSouthPits());
+        if (areAllRegularPitsEmpty(board.getNorthPits()) || areAllRegularPitsEmpty(board.getSouthPits())) {
+            int northScores = getScore(board.getNorthPits());
+            int southScores = getScore(board.getSouthPits());
             if (northScores > southScores) {
                 board.setState(GameState.NORTH_WIN);
             } else if (northScores < southScores) {
@@ -70,11 +70,11 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
         }
     }
 
-    private boolean areAllSmallPitsEmpty(List<Pit> pits) {
+    private boolean areAllRegularPitsEmpty(List<Pit> pits) {
         return pits.stream().filter(pit -> Pit.PitType.REGULAR == pit.getType()).allMatch(pit -> pit.getStones() <= 0);
     }
 
-    private int getScoreFromBigPit(List<Pit> pits) {
-        return pits.stream().filter(pit -> Pit.PitType.BIG == pit.getType()).findAny().orElseThrow(() -> new IllegalStateException("Player has no BIG pit, game state is invalid")).getStones();
+    private int getScore(List<Pit> pits) {
+        return pits.stream().map(Pit::getStones).reduce(0, Integer::sum);
     }
 }

@@ -54,7 +54,7 @@ class KalahaGameEngineImplTest {
         Board board = singleMoveVictoryBoard();
         kalahaGameEngine.processMove(board, 5);
         assertEquals("1-0.0.0.0.0.0.1.-6.6.6.6.6.6.0.", encodeBoardState(board));
-        assertEquals(GameState.SOUTH_WIN, board.getState());
+        assertEquals(GameState.NORTH_WIN, board.getState());
     }
 
     @Test
