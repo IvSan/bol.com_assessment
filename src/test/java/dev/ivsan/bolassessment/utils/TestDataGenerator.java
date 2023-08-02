@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static dev.ivsan.bolassessment.utils.BoardUtils.DEFAULT_BOARD_PITS_LENGTH;
+import static dev.ivsan.bolassessment.utils.BoardUtils.BOARD_PITS_LENGTH;
 
 public class TestDataGenerator {
     public static Player aPlayer() {
@@ -24,7 +24,7 @@ public class TestDataGenerator {
                 .northPlayer(aPlayer())
                 .northPits(
                         Stream.concat(
-                                Stream.generate(Pit::new).limit(DEFAULT_BOARD_PITS_LENGTH - 1),
+                                Stream.generate(Pit::new).limit(BOARD_PITS_LENGTH - 1),
                                 Stream.generate(() -> new Pit(0, Pit.PitType.BIG)).limit(1)
                         ).collect(Collectors.toList())
                 )

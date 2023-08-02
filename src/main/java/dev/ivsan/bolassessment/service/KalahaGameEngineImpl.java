@@ -6,6 +6,8 @@ import dev.ivsan.bolassessment.model.Pit;
 
 import java.util.List;
 
+import static dev.ivsan.bolassessment.utils.BoardUtils.BOARD_PITS_LENGTH;
+
 public class KalahaGameEngineImpl implements KalahaGameEngine {
     @Override
     public Board processMove(Board board, int pitIndex) {
@@ -37,14 +39,14 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
         int pointer = pitIndex + 1;
         while (stonesToSow > 0) {
             stonesToSow--;
-            if (pointer >= pits.size()) {
-                board.setNorthTurn(!board.isNorthTurn());
-                pits = board.isNorthTurn() ? board.getNorthPits() : board.getSouthPits();
-                pointer = 0;
-            }
-            pits.get(pointer).setStones(pits.get(pointer).getStones() + 1);
+            boolean isSowingOnOwnSide = pointer / BOARD_PITS_LENGTH % 2 == 0;
+            pits = isSowingOnOwnSide ^ board.isNorthTurn() ? board.getSouthPits() : board.getNorthPits();
+            Pit pointerPit = pits.get(pointer % BOARD_PITS_LENGTH);
+            pointerPit.setStones(pointerPit.getStones() + 1);
             pointer++;
         }
+
+        board.setNorthTurn(!board.isNorthTurn());
     }
 
     private void checkForVictory(Board board) {

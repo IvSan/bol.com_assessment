@@ -9,11 +9,12 @@ import java.util.stream.Stream;
 
 
 public class BoardUtils {
-    public static Integer DEFAULT_BOARD_PITS_LENGTH = 7;
+    public static Integer BOARD_PITS_LENGTH = 7;
+    public static Integer PIT_STARTING_STONES = 6;
 
     public static List<Pit> initialPitsSetup() {
         return Stream.concat(
-                Stream.generate(Pit::new).limit(DEFAULT_BOARD_PITS_LENGTH - 1),
+                Stream.generate(Pit::new).limit(BOARD_PITS_LENGTH - 1),
                 Stream.generate(() -> new Pit(0, Pit.PitType.BIG)).limit(1)
         ).collect(Collectors.toList());
     }
