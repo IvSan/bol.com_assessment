@@ -51,7 +51,7 @@ public class BoardUtils {
             int pointer = drawNorth ? pits.size() - i - 1 : i;
             Pit pit = pits.get(pointer);
             if (Pit.PitType.REGULAR == pit.getType()) {
-                builder.append("(").append(pit.getStones()).append(")");
+                builder.append("(").append(String.format("%1$2s", pit.getStones())).append(")");
             } else {
                 builder.append("[").append(String.format("%02d", pit.getStones())).append("]");
             }

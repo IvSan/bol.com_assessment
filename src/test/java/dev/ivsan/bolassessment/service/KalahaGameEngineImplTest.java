@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static dev.ivsan.bolassessment.utils.BoardUtils.BOARD_PITS_LENGTH;
 import static dev.ivsan.bolassessment.utils.BoardUtils.encodeBoardState;
+import static dev.ivsan.bolassessment.utils.BoardUtils.getVisualRepresentation;
 import static dev.ivsan.bolassessment.utils.TestDataGenerator.aBoard;
 import static dev.ivsan.bolassessment.utils.TestDataGenerator.singleMoveVictoryBoard;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +28,10 @@ class KalahaGameEngineImplTest {
         assertEquals("0-7.0.7.7.7.0.2.-8.1.8.8.8.8.1.", encodeBoardState(board));
         kalahaGameEngine.processMove(board, 1);
         assertEquals("1-7.0.7.7.7.0.2.-8.0.9.8.8.8.1.", encodeBoardState(board));
+        System.out.println(getVisualRepresentation(board));
+        kalahaGameEngine.processMove(board, 4);
+        System.out.println(getVisualRepresentation(board));
+        assertEquals("0-7.0.7.7.0.1.3.-9.1.10.9.9.8.1.", encodeBoardState(board));
         assertEquals(GameState.IN_PROGRESS, board.getState());
     }
 

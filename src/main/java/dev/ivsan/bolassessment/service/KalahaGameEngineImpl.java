@@ -42,8 +42,12 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
             boolean isSowingOnOwnSide = pointer / BOARD_PITS_LENGTH % 2 == 0;
             pits = isSowingOnOwnSide ^ board.isNorthTurn() ? board.getSouthPits() : board.getNorthPits();
             Pit pointerPit = pits.get(pointer % BOARD_PITS_LENGTH);
-            pointerPit.setStones(pointerPit.getStones() + 1);
             pointer++;
+            if (Pit.PitType.BIG == pointerPit.getType() && !isSowingOnOwnSide) {
+                stonesToSow++;
+                continue;
+            }
+            pointerPit.setStones(pointerPit.getStones() + 1);
         }
 
         board.setNorthTurn(!board.isNorthTurn());
