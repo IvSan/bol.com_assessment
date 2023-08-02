@@ -43,14 +43,28 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
         while (stonesToSow > 0) {
             boolean isSowingOnOwnSide = pointer / BOARD_PITS_LENGTH % 2 == 0;
             pits = isSowingOnOwnSide ^ board.isNorthTurn() ? board.getSouthPits() : board.getNorthPits();
-            Pit pointerPit = pits.get(pointer % BOARD_PITS_LENGTH);
+            int ownPitIndex = pointer % BOARD_PITS_LENGTH;
+            Pit pointerPit = pits.get(ownPitIndex);
             pointer++;
             if (Pit.PitType.BIG == pointerPit.getType() && !isSowingOnOwnSide)
                 continue; // Skip opponent's big pit while sowing
             stonesToSow--;
             pointerPit.setStones(pointerPit.getStones() + 1);
-            if (Pit.PitType.BIG == pointerPit.getType() && isSowingOnOwnSide && stonesToSow == 0)
-                return; // Turn ended in own big pit, get another turn
+            if (stonesToSow == 0 && isSowingOnOwnSide) {
+                if (Pit.PitType.BIG == pointerPit.getType()) return; // Turn ended in own big pit, get another turn
+                if (Pit.PitType.REGULAR == pointerPit.getType() && pointerPit.getStones() == 1) {
+                    // Turn ended in own regular empty pit, capture own stone and opponent's stones to the big pit
+                    pointerPit.setStones(0);
+                    int oppositePitIndex = BOARD_PITS_LENGTH - 2 - ownPitIndex;
+                    List<Pit> opponentPits = board.isNorthTurn() ? board.getSouthPits() : board.getNorthPits();
+                    int stonesFromOpponentPit = opponentPits.get(oppositePitIndex).getStones();
+                    opponentPits.get(oppositePitIndex).setStones(0);
+                    pits.get(BOARD_PITS_LENGTH - 1).setStones(
+                            pits.get(BOARD_PITS_LENGTH - 1).getStones() + stonesFromOpponentPit + 1
+                    );
+                }
+            }
+
         }
 
         board.setNorthTurn(!board.isNorthTurn());
