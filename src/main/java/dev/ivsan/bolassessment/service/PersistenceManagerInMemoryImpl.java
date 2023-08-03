@@ -20,11 +20,13 @@ public class PersistenceManagerInMemoryImpl implements PersistenceManager {
     }
 
     private final HashMap<UUID, String> players = new HashMap<>();
+    private final HashMap<UUID, String> apiSecrets = new HashMap<>();
     private final HashMap<UUID, String> boards = new HashMap<>();
 
     @Override
     public Player savePlayer(Player player) {
         players.put(player.getId(), serializationHelper.serializePlayer(player));
+        apiSecrets.putIfAbsent(player.getId(), generateRandomAlphanumeric());
         return player;
     }
 
@@ -32,6 +34,11 @@ public class PersistenceManagerInMemoryImpl implements PersistenceManager {
     public Optional<Player> findPlayerById(UUID id) {
         Optional<String> optional = Optional.ofNullable(players.get(id));
         return optional.map(s -> serializationHelper.deserializePlayer(s));
+    }
+
+    @Override
+    public Optional<String> findPlayerApiSecretByPlayerId(UUID id) {
+        return Optional.ofNullable(apiSecrets.get(id));
     }
 
     @Override
@@ -44,5 +51,9 @@ public class PersistenceManagerInMemoryImpl implements PersistenceManager {
     public Optional<Board> findBoardById(UUID id) {
         Optional<String> optional = Optional.ofNullable(boards.get(id));
         return optional.map(s -> serializationHelper.deserializeBoard(s));
+    }
+
+    private String generateRandomAlphanumeric() {
+        return Long.toHexString(Double.doubleToLongBits(Math.random()));
     }
 }

@@ -12,6 +12,8 @@ public interface PersistenceManager {
 
     Optional<Player> findPlayerById(UUID id);
 
+    Optional<String> findPlayerApiSecretByPlayerId(UUID id);
+
     Board saveBoard(Board board);
 
     Optional<Board> findBoardById(UUID id);
