@@ -10,12 +10,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class PersistenceManagerInMemoryImpl implements PersistenceManager {
+public class DataManagerInMemoryImpl implements DataManager {
 
     @Autowired
     SerializationHelper serializationHelper;
 
-    public PersistenceManagerInMemoryImpl(SerializationHelper serializationHelper) {
+    public DataManagerInMemoryImpl(SerializationHelper serializationHelper) {
         this.serializationHelper = serializationHelper;
     }
 

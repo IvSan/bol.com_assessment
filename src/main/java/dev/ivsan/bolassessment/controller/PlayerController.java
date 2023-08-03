@@ -1,7 +1,7 @@
 package dev.ivsan.bolassessment.controller;
 
-import dev.ivsan.bolassessment.dto.LoginRequestDTO;
-import dev.ivsan.bolassessment.dto.LoginResponseDTO;
+import dev.ivsan.bolassessment.dto.PlayerLoginRequestDTO;
+import dev.ivsan.bolassessment.dto.PlayerLoginResponseDTO;
 import dev.ivsan.bolassessment.service.PlayersManager;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
@@ -26,10 +26,10 @@ public class PlayerController {
 
     @PostMapping("/login")
     @Operation(summary = "Login with your nickname")
-    public ResponseEntity<LoginResponseDTO> saveNewRecipe(@RequestBody LoginRequestDTO request) {
+    public ResponseEntity<PlayerLoginResponseDTO> playerLogin(@RequestBody PlayerLoginRequestDTO request) {
         LOG.info("New '/login' POST request with the request body: {}", request);
         // TODO validation validationService.validate(request);
-        LoginResponseDTO response = playersManager.createPlayer(request);
+        PlayerLoginResponseDTO response = playersManager.createPlayer(request);
         LOG.info("Login request completed successfully: {}", response);
         return new ResponseEntity<>(response, CREATED);
     }

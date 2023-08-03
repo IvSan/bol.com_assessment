@@ -6,7 +6,7 @@ import dev.ivsan.bolassessment.model.Player;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface PersistenceManager {
+public interface DataManager {
 
     Player savePlayer(Player player);
 

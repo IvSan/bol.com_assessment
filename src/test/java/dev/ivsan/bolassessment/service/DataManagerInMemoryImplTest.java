@@ -8,25 +8,25 @@ import org.junit.jupiter.api.Test;
 import static dev.ivsan.bolassessment.utils.TestDataGenerator.aBoardWithSomeMoves;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class PersistenceManagerInMemoryImplTest {
+class DataManagerInMemoryImplTest {
 
-    private final PersistenceManager persistenceManager = new PersistenceManagerInMemoryImpl(
+    private final DataManager dataManager = new DataManagerInMemoryImpl(
             new SerializationHelperImpl(new ObjectMapper())
     );
 
     @Test
     void shouldSavePlayerInMemory() {
         Player bob = new Player("Bob");
-        persistenceManager.savePlayer(bob);
-        Player searchResult = persistenceManager.findPlayerById(bob.getId()).orElseThrow();
+        dataManager.savePlayer(bob);
+        Player searchResult = dataManager.findPlayerById(bob.getId()).orElseThrow();
         assertEquals(bob, searchResult);
     }
 
     @Test
     void shouldSaveBoardInMemory() {
         Board board = aBoardWithSomeMoves();
-        persistenceManager.saveBoard(board);
-        Board searchResult = persistenceManager.findBoardById(board.getId()).orElseThrow();
+        dataManager.saveBoard(board);
+        Board searchResult = dataManager.findBoardById(board.getId()).orElseThrow();
         assertEquals(board, searchResult);
     }
 

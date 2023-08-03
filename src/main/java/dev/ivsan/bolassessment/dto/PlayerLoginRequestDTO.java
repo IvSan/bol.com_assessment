@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequestDTO {
+public class PlayerLoginRequestDTO {
     @Schema(
             description = "Pick your favourite nickname, used to help players identify each other. " +
                     "Please use only english letters and numbers",

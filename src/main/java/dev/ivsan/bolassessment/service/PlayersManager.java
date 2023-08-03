@@ -1,8 +1,8 @@
 package dev.ivsan.bolassessment.service;
 
-import dev.ivsan.bolassessment.dto.LoginRequestDTO;
-import dev.ivsan.bolassessment.dto.LoginResponseDTO;
+import dev.ivsan.bolassessment.dto.PlayerLoginRequestDTO;
+import dev.ivsan.bolassessment.dto.PlayerLoginResponseDTO;
 
 public interface PlayersManager {
-    LoginResponseDTO createPlayer(LoginRequestDTO request);
+    PlayerLoginResponseDTO createPlayer(PlayerLoginRequestDTO request);
 }
