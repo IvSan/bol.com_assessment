@@ -4,6 +4,7 @@ public class MaskingUtils {
     public static String TAILING_MASK = "****************";
 
     public static String maskLine(String line) {
+        if (line == null) return null;
         if (line.length() < TAILING_MASK.length()) {
             return TAILING_MASK;
         } else {

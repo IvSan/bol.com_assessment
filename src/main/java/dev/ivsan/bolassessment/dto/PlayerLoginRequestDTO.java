@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PlayerLoginRequestDTO {
     @Schema(
-            description = "Pick your favourite nickname, used to help players identify each other. " +
+            description = "Pick your favourite nickname, helps players identify each other. " +
                     "Please use only english letters and numbers",
             example = "Champion-Bob"
     )
