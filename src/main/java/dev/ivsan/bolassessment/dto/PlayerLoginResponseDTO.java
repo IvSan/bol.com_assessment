@@ -6,7 +6,8 @@ import lombok.ToString;
 
 import java.util.UUID;
 
-import static dev.ivsan.bolassessment.utils.MaskingUtils.maskLine;
+import static dev.ivsan.bolassessment.utils.ApiSecretUtils.maskSecret;
+import static dev.ivsan.bolassessment.utils.ApiSecretUtils.mergePlayerIdAndSecret;
 
 @Data
 public class PlayerLoginResponseDTO {
@@ -23,12 +24,12 @@ public class PlayerLoginResponseDTO {
 
     @ToString.Include
     private String maskedApiSecret() {
-        return maskLine(apiSecret);
+        return maskSecret(apiSecret);
     }
 
-    public PlayerLoginResponseDTO(String nickname, UUID id, String apiSecret) {
+    public PlayerLoginResponseDTO(String nickname, UUID id, String secret) {
         this.nickname = nickname;
-        this.apiSecret = String.format("%s-%s", id.toString(), apiSecret);
+        this.apiSecret = mergePlayerIdAndSecret(id, secret);
     }
 
     public PlayerLoginResponseDTO(String error) {

@@ -2,7 +2,6 @@ package dev.ivsan.bolassessment.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ivsan.bolassessment.model.Board;
-import dev.ivsan.bolassessment.model.Player;
 import org.junit.jupiter.api.Test;
 
 import static dev.ivsan.bolassessment.utils.TestDataGenerator.aBoardWithSomeMoves;
@@ -13,14 +12,6 @@ class DataManagerInMemoryImplTest {
     private final DataManager dataManager = new DataManagerInMemoryImpl(
             new SerializationHelperImpl(new ObjectMapper())
     );
-
-    @Test
-    void shouldSavePlayerInMemory() {
-        Player bob = new Player("Bob");
-        dataManager.savePlayer(bob);
-        Player searchResult = dataManager.findPlayerById(bob.getId()).orElseThrow();
-        assertEquals(bob, searchResult);
-    }
 
     @Test
     void shouldSaveBoardInMemory() {

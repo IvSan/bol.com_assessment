@@ -20,13 +20,13 @@ public class DataManagerInMemoryImpl implements DataManager {
     }
 
     private final HashMap<UUID, String> players = new HashMap<>();
-    private final HashMap<UUID, String> apiSecrets = new HashMap<>();
+    private final HashMap<UUID, String> secrets = new HashMap<>();
     private final HashMap<UUID, String> boards = new HashMap<>();
 
     @Override
     public Player savePlayer(Player player) {
         players.put(player.getId(), serializationHelper.serializePlayer(player));
-        apiSecrets.putIfAbsent(player.getId(), generateRandomAlphanumeric());
+        secrets.putIfAbsent(player.getId(), generateRandomAlphanumeric());
         return player;
     }
 
@@ -37,8 +37,13 @@ public class DataManagerInMemoryImpl implements DataManager {
     }
 
     @Override
-    public Optional<String> findPlayerApiSecretByPlayerId(UUID id) {
-        return Optional.ofNullable(apiSecrets.get(id));
+    public Optional<String> findPlayerSecretByPlayerId(UUID id) {
+        return Optional.ofNullable(secrets.get(id));
+    }
+
+    @Override
+    public Boolean isPlayerSecretValid(UUID playerId, String secret) {
+        return secrets.containsKey(playerId) && secrets.get(playerId).equals(secret);
     }
 
     @Override

@@ -12,7 +12,9 @@ public interface DataManager {
 
     Optional<Player> findPlayerById(UUID id);
 
-    Optional<String> findPlayerApiSecretByPlayerId(UUID id);
+    Optional<String> findPlayerSecretByPlayerId(UUID id);
+
+    Boolean isPlayerSecretValid(UUID playerId, String secret);
 
     Board saveBoard(Board board);
 
