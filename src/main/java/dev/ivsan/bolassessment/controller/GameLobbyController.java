@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -38,12 +39,20 @@ public class GameLobbyController {
         Either<String, PlayerLoginRequestDTO> errorOrRequest = validationService.validate(request);
         if (errorOrRequest.isLeft()) {
             PlayerLoginResponseDTO response = new PlayerLoginResponseDTO(errorOrRequest.getLeft());
-            LOG.warn("Login request successful: {}", response);
+            LOG.warn("Login request invalid: {}", response);
             return new ResponseEntity<>(response, BAD_REQUEST);
         }
-        PlayerLoginResponseDTO response = playersManager.createPlayer(errorOrRequest.get());
 
-        LOG.info("Login request completed successfully: {}", response);
-        return new ResponseEntity<>(response, CREATED);
+        try {
+            PlayerLoginResponseDTO response = playersManager.createPlayer(errorOrRequest.get());
+            LOG.info("Login request completed successfully: {}", response);
+            return new ResponseEntity<>(response, CREATED);
+        } catch (Exception ex) {
+            LOG.error("Login request unsuccessful, internal error", ex);
+            return new ResponseEntity<>(
+                    new PlayerLoginResponseDTO("Internal server error, please try again later"),
+                    INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }
