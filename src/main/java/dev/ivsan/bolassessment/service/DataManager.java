@@ -3,6 +3,7 @@ package dev.ivsan.bolassessment.service;
 import dev.ivsan.bolassessment.model.Board;
 import dev.ivsan.bolassessment.model.Player;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,4 +21,5 @@ public interface DataManager {
 
     Optional<Board> findBoardById(UUID id);
 
+    List<UUID> listBoardIdsByPlayerId(UUID id);
 }

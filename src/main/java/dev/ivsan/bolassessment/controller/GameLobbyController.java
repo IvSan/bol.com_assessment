@@ -4,6 +4,7 @@ import dev.ivsan.bolassessment.dto.PlayerEnrollRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerEnrollResponseDTO;
 import dev.ivsan.bolassessment.dto.PlayerLoginRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerLoginResponseDTO;
+import dev.ivsan.bolassessment.service.BoardManagerImpl;
 import dev.ivsan.bolassessment.service.PlayersManager;
 import dev.ivsan.bolassessment.service.ValidationService;
 import io.github.resilience4j.core.functions.Either;
@@ -31,6 +32,9 @@ public class GameLobbyController {
 
     @Autowired
     PlayersManager playersManager;
+
+    @Autowired
+    BoardManagerImpl boardManager;
 
     private final static Logger LOG = LoggerFactory.getLogger(GameLobbyController.class);
 
@@ -68,7 +72,7 @@ public class GameLobbyController {
                 LOG.warn("Enroll request invalid: {}", response);
                 return new ResponseEntity<>(response, BAD_REQUEST);
             }
-            PlayerEnrollResponseDTO response = playersManager.enrollInGame(errorOrRequest.get());
+            PlayerEnrollResponseDTO response = boardManager.enrollInGame(errorOrRequest.get());
             LOG.info("Enroll request completed successfully: {}", response);
             return new ResponseEntity<>(response, OK);
         } catch (Exception ex) {

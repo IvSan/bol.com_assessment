@@ -1,5 +1,6 @@
 package dev.ivsan.bolassessment.service;
 
+import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerEnrollRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerLoginRequestDTO;
 import io.github.resilience4j.core.functions.Either;
@@ -29,12 +30,12 @@ public class ValidationServiceImpl implements ValidationService {
 
     @Override
     public Either<String, PlayerEnrollRequestDTO> validateEnrollRequest(PlayerEnrollRequestDTO request) {
-        Either<String, UUID> errorOrPlayerId = validateSecretAndReturnPlayerId(request.getApiSecret());
-        if (errorOrPlayerId.isLeft()) {
-            return Either.left(errorOrPlayerId.getLeft());
-        } else {
-            return Either.right(request);
-        }
+        return validateSecretAndReturnPlayerId(request.getApiSecret()).map(id -> request);
+    }
+
+    @Override
+    public Either<String, ListBoardsRequestDTO> validateGetBoardsRequest(ListBoardsRequestDTO request) {
+        return validateSecretAndReturnPlayerId(request.getApiSecret()).map(id -> request);
     }
 
     private Either<String, UUID> validateSecretAndReturnPlayerId(String apiSecret) {

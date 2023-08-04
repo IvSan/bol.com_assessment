@@ -1,7 +1,12 @@
 package dev.ivsan.bolassessment.service;
 
-import dev.ivsan.bolassessment.model.Player;
+import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
+import dev.ivsan.bolassessment.dto.ListBoardsResponseDTO;
+import dev.ivsan.bolassessment.dto.PlayerEnrollRequestDTO;
+import dev.ivsan.bolassessment.dto.PlayerEnrollResponseDTO;
 
 public interface BoardManager {
-    void enrollPlayer(Player player);
+    PlayerEnrollResponseDTO enrollInGame(PlayerEnrollRequestDTO request);
+
+    ListBoardsResponseDTO listBoards(ListBoardsRequestDTO request);
 }
