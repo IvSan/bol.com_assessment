@@ -24,7 +24,6 @@ repositories {
 extra["springCloudVersion"] = "2022.0.4"
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-amqp")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
@@ -32,9 +31,7 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
-	testImplementation("org.springframework.amqp:spring-rabbit-test")
 	testImplementation("org.testcontainers:junit-jupiter")
-	testImplementation("org.testcontainers:rabbitmq")
 }
 
 dependencyManagement {

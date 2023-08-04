@@ -1,5 +1,6 @@
 package dev.ivsan.bolassessment.service;
 
+import dev.ivsan.bolassessment.dto.PlayerEnrollRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerEnrollResponseDTO;
 import dev.ivsan.bolassessment.dto.PlayerLoginRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerLoginResponseDTO;
@@ -7,13 +8,16 @@ import dev.ivsan.bolassessment.model.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import static dev.ivsan.bolassessment.utils.ApiSecretUtils.getPlayerIdFromSecret;
 
 @Service
 public class PlayersManagerImpl implements PlayersManager {
 
     @Autowired
     DataManager dataManager;
+
+    @Autowired
+    BoardManagerImpl boardManager;
 
     @Override
     public PlayerLoginResponseDTO createPlayer(PlayerLoginRequestDTO request) {
@@ -23,8 +27,10 @@ public class PlayersManagerImpl implements PlayersManager {
     }
 
     @Override
-    public PlayerEnrollResponseDTO enrollInGame(UUID playerId) {
-        Player playerToEnroll = dataManager.findPlayerById(playerId).orElseThrow();
+    public PlayerEnrollResponseDTO enrollInGame(PlayerEnrollRequestDTO request) {
+        Player playerToEnroll = dataManager
+                .findPlayerById(getPlayerIdFromSecret(request.getApiSecret())).orElseThrow();
+        boardManager.enrollPlayer(playerToEnroll);
         return new PlayerEnrollResponseDTO();
     }
 }

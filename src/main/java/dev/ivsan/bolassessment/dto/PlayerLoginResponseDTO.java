@@ -16,7 +16,7 @@ public class PlayerLoginResponseDTO {
     private String nickname;
 
     @ToString.Exclude
-    @Schema(description = "Api secret that is required as a header for all other requests")
+    @Schema(description = "Api secret that is required for all other requests")
     private String apiSecret;
 
     @Schema(description = "Error details in case of unsuccessful request")
