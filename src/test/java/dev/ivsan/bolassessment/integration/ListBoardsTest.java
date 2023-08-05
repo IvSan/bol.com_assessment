@@ -12,10 +12,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.UUID;
-
 import static dev.ivsan.bolassessment.integration.UserEnrollTest.loginAndEnroll;
-import static dev.ivsan.bolassessment.utils.ApiSecretUtils.getPlayerIdFromSecret;
 import static dev.ivsan.bolassessment.utils.HttpRequestGenerator.getBoardsRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,9 +33,6 @@ public class ListBoardsTest {
     public void shouldStartGameForTwoEnrolledPlayers() throws Exception {
         LoginResponse bob = loginAndEnroll(mockMvc, mapper, "Bob");
         LoginResponse alice = loginAndEnroll(mockMvc, mapper, "Alice");
-
-        UUID bobId = getPlayerIdFromSecret(bob.getApiSecret());
-        UUID aliceId = getPlayerIdFromSecret(alice.getApiSecret());
 
         String boardsResponseRaw = mockMvc.perform(getBoardsRequest(bob.getApiSecret()))
                 .andExpect(status().isOk())

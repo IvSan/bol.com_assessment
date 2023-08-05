@@ -82,4 +82,6 @@ public class UserEnrollTest {
         mockMvc.perform(enrollRequest(login.getApiSecret())).andExpect(status().isOk()).andReturn();
         return login;
     }
+
+    // TODO Negative tests
 }
