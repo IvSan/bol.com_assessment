@@ -1,12 +1,11 @@
 package dev.ivsan.bolassessment.dto;
 
-import dev.ivsan.bolassessment.model.Board;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,16 +13,16 @@ import java.util.Set;
 public class ListBoardsResponseDTO {
 
     @Schema(description = "Boards that still in play")
-    private Set<Board> inProgress;
+    private List<BoardResponseDTO> ongoing;
 
     @Schema(description = "Archive of completed boards")
-    private Set<Board> completed;
+    private List<BoardResponseDTO> completed;
 
     @Schema(description = "Error details in case of unsuccessful request")
     private String error;
 
-    public ListBoardsResponseDTO(Set<Board> inProgress, Set<Board> completed) {
-        this.inProgress = inProgress;
+    public ListBoardsResponseDTO(List<BoardResponseDTO> ongoing, List<BoardResponseDTO> completed) {
+        this.ongoing = ongoing;
         this.completed = completed;
     }
 

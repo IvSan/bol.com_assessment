@@ -1,5 +1,6 @@
 package dev.ivsan.bolassessment.service;
 
+import dev.ivsan.bolassessment.dto.GetBoardRequestDTO;
 import dev.ivsan.bolassessment.dto.GetBoardResponseDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsResponseDTO;
@@ -13,5 +14,5 @@ public interface BoardManager {
 
     ListBoardsResponseDTO listBoards(ListBoardsRequestDTO request);
 
-    GetBoardResponseDTO getBoard(UUID boardId);
+    GetBoardResponseDTO getBoard(GetBoardRequestDTO request, UUID boardId);
 }

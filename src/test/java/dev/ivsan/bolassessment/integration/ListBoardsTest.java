@@ -39,7 +39,7 @@ public class ListBoardsTest {
                 .andReturn().getResponse().getContentAsString();
         ListBoardsResponseDTO boardsResponse = mapper.readValue(boardsResponseRaw, ListBoardsResponseDTO.class);
 
-        assertEquals(1, boardsResponse.getInProgress().size());
+        assertEquals(1, boardsResponse.getOngoing().size());
         assertEquals(0, boardsResponse.getCompleted().size());
     }
 }

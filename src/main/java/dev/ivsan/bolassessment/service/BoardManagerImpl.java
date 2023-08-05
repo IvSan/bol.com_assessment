@@ -1,5 +1,7 @@
 package dev.ivsan.bolassessment.service;
 
+import dev.ivsan.bolassessment.dto.BoardResponseDTO;
+import dev.ivsan.bolassessment.dto.GetBoardRequestDTO;
 import dev.ivsan.bolassessment.dto.GetBoardResponseDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsResponseDTO;
@@ -19,8 +21,10 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static dev.ivsan.bolassessment.dto.BoardResponseDTO.generateBoardResponseDtoForPlayer;
 import static dev.ivsan.bolassessment.utils.ApiSecretUtils.getPlayerIdFromSecret;
 
 
@@ -71,21 +75,30 @@ public class BoardManagerImpl implements BoardManager {
 
     @Override
     public ListBoardsResponseDTO listBoards(ListBoardsRequestDTO request) {
-        List<Board> boards = dataManager.listBoardIdsByPlayerId(getPlayerIdFromSecret(request.getApiSecret())).stream()
+        Player playerToRespond = dataManager.findPlayerById(getPlayerIdFromSecret(request.getApiSecret())).orElseThrow();
+        List<Board> boards = dataManager.listBoardIdsByPlayerId(playerToRespond.getId()).stream()
                 .map(id -> dataManager.findBoardById(id))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
-        return new ListBoardsResponseDTO(
-                boards.stream().filter(b -> GameState.IN_PROGRESS == b.getState()).collect(Collectors.toSet()),
-                request.isIncludeCompleted() ?
-                        boards.stream().filter(b -> GameState.IN_PROGRESS != b.getState()).collect(Collectors.toSet()) :
-                        null
-        );
+        List<BoardResponseDTO> ongoingBoards = filterAndMapBoardsToBoardResponseDTO(boards,
+                board -> GameState.IN_PROGRESS == board.getState(), playerToRespond);
+        List<BoardResponseDTO> completedBoards = request.isIncludeCompleted() ?
+                filterAndMapBoardsToBoardResponseDTO(boards, board -> GameState.IN_PROGRESS != board.getState(), playerToRespond) :
+                null;
+        return new ListBoardsResponseDTO(ongoingBoards, completedBoards);
+    }
+
+    private List<BoardResponseDTO> filterAndMapBoardsToBoardResponseDTO(List<Board> boards, Predicate<Board> filter,
+            Player playerToRespond) {
+        return boards.stream().filter(filter).map(board -> generateBoardResponseDtoForPlayer(board, playerToRespond))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public GetBoardResponseDTO getBoard(UUID boardId) {
-        return new GetBoardResponseDTO(dataManager.findBoardById(boardId).orElseThrow());
+    public GetBoardResponseDTO getBoard(GetBoardRequestDTO request, UUID boardId) {
+        Board board = dataManager.findBoardById(boardId).orElseThrow();
+        Player playerToRespond = dataManager.findPlayerById(getPlayerIdFromSecret(request.getApiSecret())).orElseThrow();
+        return new GetBoardResponseDTO(generateBoardResponseDtoForPlayer(board, playerToRespond));
     }
 }

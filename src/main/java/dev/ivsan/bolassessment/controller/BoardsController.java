@@ -76,7 +76,7 @@ public class BoardsController {
                 LOG.warn("Get board request invalid: {}", response);
                 return new ResponseEntity<>(response, errorOrRequest.getLeft().getLeft());
             }
-            GetBoardResponseDTO response = boardManager.getBoard(boardId);
+            GetBoardResponseDTO response = boardManager.getBoard(errorOrRequest.get(), boardId);
             LOG.info("Get board request completed successfully: {}", response);
             return new ResponseEntity<>(response, OK);
         } catch (Exception ex) {
