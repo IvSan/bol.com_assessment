@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserEnrollTest {
 
     @Autowired
@@ -62,8 +64,8 @@ public class UserEnrollTest {
 
     @Test
     public void shouldStartGameForTwoEnrolledPlayers() throws Exception {
-        LoginResponse bob = loginAndEnroll("Bob");
-        LoginResponse alice = loginAndEnroll("Alice");
+        LoginResponse bob = loginAndEnroll(mockMvc, mapper, "Bob");
+        LoginResponse alice = loginAndEnroll(mockMvc, mapper, "Alice");
 
         UUID bobId = getPlayerIdFromSecret(bob.getApiSecret());
         assertEquals(1, dataManager.listBoardIdsByPlayerId(bobId).size());
@@ -72,12 +74,12 @@ public class UserEnrollTest {
         assertEquals(1, dataManager.listBoardIdsByPlayerId(aliceId).size());
     }
 
-    private LoginResponse loginAndEnroll(String nickname) throws Exception {
-        String BobLoginRaw = mockMvc.perform(loginRequest("Bob"))
+    public static LoginResponse loginAndEnroll(MockMvc mockMvc, ObjectMapper mapper, String nickname) throws Exception {
+        String loginRaw = mockMvc.perform(loginRequest("Bob"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        LoginResponse BobLogin = mapper.readValue(BobLoginRaw, LoginResponse.class);
-        mockMvc.perform(enrollRequest(BobLogin.getApiSecret())).andExpect(status().isOk()).andReturn();
-        return BobLogin;
+        LoginResponse login = mapper.readValue(loginRaw, LoginResponse.class);
+        mockMvc.perform(enrollRequest(login.getApiSecret())).andExpect(status().isOk()).andReturn();
+        return login;
     }
 }

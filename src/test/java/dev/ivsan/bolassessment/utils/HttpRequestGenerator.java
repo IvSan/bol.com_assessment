@@ -4,6 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static dev.ivsan.bolassessment.utils.TestConstants.URL_BOARDS;
 import static dev.ivsan.bolassessment.utils.TestConstants.URL_ENROLL;
 import static dev.ivsan.bolassessment.utils.TestConstants.URL_LOGIN;
 
@@ -18,5 +19,11 @@ public class HttpRequestGenerator {
         return MockMvcRequestBuilders.post(URL_ENROLL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"apiSecret\":\"" + apiSecret + "\"}");
+    }
+
+    public static RequestBuilder getBoardsRequest(String apiSecret) {
+        return MockMvcRequestBuilders.get(URL_BOARDS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"apiSecret\":\"" + apiSecret + "\",\"includeCompleted\":true}");
     }
 }
