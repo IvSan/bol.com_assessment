@@ -1,5 +1,6 @@
 package dev.ivsan.bolassessment.service;
 
+import dev.ivsan.bolassessment.dto.GetBoardResponseDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsResponseDTO;
 import dev.ivsan.bolassessment.dto.PlayerEnrollRequestDTO;
@@ -81,5 +82,10 @@ public class BoardManagerImpl implements BoardManager {
                         boards.stream().filter(b -> GameState.IN_PROGRESS != b.getState()).collect(Collectors.toSet()) :
                         null
         );
+    }
+
+    @Override
+    public GetBoardResponseDTO getBoard(UUID boardId) {
+        return new GetBoardResponseDTO(dataManager.findBoardById(boardId).orElseThrow());
     }
 }
