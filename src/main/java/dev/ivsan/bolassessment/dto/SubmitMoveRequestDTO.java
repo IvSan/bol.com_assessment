@@ -11,7 +11,7 @@ import static dev.ivsan.bolassessment.utils.ApiSecretUtils.maskSecret;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetBoardRequestDTO {
+public class SubmitMoveRequestDTO {
     @ToString.Exclude
     @Schema(
             description = "Mandatory, please use your secret obtained on login step",
@@ -19,6 +19,14 @@ public class GetBoardRequestDTO {
             requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String apiSecret;
+
+    @ToString.Exclude
+    @Schema(
+            description = "The index of the pit from which you wish to make a move",
+            example = "1",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
+    private int move;
 
     @Schema(
             description = "Determines whether or not to include a text-based representation of the game state",

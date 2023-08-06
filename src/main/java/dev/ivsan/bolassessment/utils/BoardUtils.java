@@ -5,6 +5,7 @@ import dev.ivsan.bolassessment.model.Pit;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
@@ -30,6 +31,13 @@ public class BoardUtils {
             builder.append(pit.getStones()).append(".");
         }
         return builder.toString();
+    }
+
+    public static List<Integer> listAvailableMoveIndexes(List<Pit> pits) {
+        return IntStream.range(0, pits.size())
+                .filter(pitIndex -> pits.get(pitIndex).getStones() > 0 && Pit.PitType.REGULAR == pits.get(pitIndex).getType())
+                .boxed()
+                .collect(Collectors.toList());
     }
 
     public static String getVisualRepresentation(Board board) {

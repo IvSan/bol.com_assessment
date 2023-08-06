@@ -14,7 +14,8 @@ public class PlayerLoginRequestDTO {
     @Schema(
             description = "Pick your favourite nickname, helps players identify each other. " +
                     "Please use only english letters and numbers",
-            example = "Champion-Bob"
+            example = "ChampionBob",
+            requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String nickname;
 }

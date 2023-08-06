@@ -9,10 +9,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static dev.ivsan.bolassessment.utils.BoardUtils.getVisualRepresentation;
+import static dev.ivsan.bolassessment.utils.BoardUtils.listAvailableMoveIndexes;
 
 public record BoardResponseDTO(
         @Schema(description = "Board id")
@@ -58,12 +57,5 @@ public record BoardResponseDTO(
                 board.getMoveLog(),
                 includeTextRepresentation ? getVisualRepresentation(board) : null
         );
-    }
-
-    private static List<Integer> listAvailableMoveIndexes(List<Pit> pits) {
-        return IntStream.range(0, pits.size())
-                .filter(pitIndex -> pits.get(pitIndex).getStones() > 0 && Pit.PitType.REGULAR == pits.get(pitIndex).getType())
-                .boxed()
-                .collect(Collectors.toList());
     }
 }

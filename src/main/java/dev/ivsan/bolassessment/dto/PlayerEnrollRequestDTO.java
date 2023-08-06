@@ -15,7 +15,8 @@ public class PlayerEnrollRequestDTO {
     @ToString.Exclude
     @Schema(
             description = "Mandatory, please use your secret obtained on login step",
-            example = "cd965770-eca7-4931-9fc9-de47c6463683-3fef2f3b8a52f079"
+            example = "cd965770-eca7-4931-9fc9-de47c6463683-3fef2f3b8a52f079",
+            requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String apiSecret;
 

@@ -4,14 +4,19 @@ import dev.ivsan.bolassessment.dto.GetBoardRequestDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerEnrollRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerLoginRequestDTO;
+import dev.ivsan.bolassessment.dto.SubmitMoveRequestDTO;
+import dev.ivsan.bolassessment.model.Board;
+import dev.ivsan.bolassessment.model.Pit;
 import io.github.resilience4j.core.functions.Either;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
+import static dev.ivsan.bolassessment.utils.BoardUtils.listAvailableMoveIndexes;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -25,7 +30,8 @@ public class ValidationServiceImpl implements ValidationService {
     private static final int API_SECRET_LENGTH = 53;
     private static final int UUID_LENGTH = 36;
     private static final String UUID_REGEX = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
-    private static final String INVALID_SECRET_ERROR = "Invalid api secret, please login again and use api secret for every other request";
+    private static final String INVALID_SECRET_ERROR = "Invalid api secret, please login again and use the obtained " +
+            "api secret for every other request";
 
     @Override
     public Either<Pair<HttpStatus, String>, PlayerLoginRequestDTO> validateLoginRequest(PlayerLoginRequestDTO request) {
@@ -50,14 +56,44 @@ public class ValidationServiceImpl implements ValidationService {
             GetBoardRequestDTO request,
             UUID boardId
     ) {
-        Either<Pair<HttpStatus, String>, UUID> errorOrPlayerId = validateSecretAndReturnPlayerId(request.getApiSecret());
-        if (errorOrPlayerId.isLeft()) return Either.left(errorOrPlayerId.getLeft());
-        boolean isPlayerOnBoard = dataManager.listBoardIdsByPlayerId(errorOrPlayerId.get()).contains(boardId);
-        if (isPlayerOnBoard) {
-            return Either.right(request);
-        } else {
-            return Either.left(Pair.of(NOT_FOUND, "Board not found"));
+        Either<Pair<HttpStatus, String>, UUID> errorOrAuthenticatedPlayerId =
+                validateSecretAndReturnPlayerId(request.getApiSecret());
+        if (errorOrAuthenticatedPlayerId.isLeft()) return Either.left(errorOrAuthenticatedPlayerId.getLeft());
+
+        Either<Pair<HttpStatus, String>, UUID> errorOrAuthorizedBoardId =
+                validateIfPlayerOnBoardAndReturnBoardId(errorOrAuthenticatedPlayerId.get(), boardId);
+        if (errorOrAuthorizedBoardId.isLeft()) return Either.left(errorOrAuthorizedBoardId.getLeft());
+
+        return Either.right(request);
+    }
+
+    @Override
+    public Either<Pair<HttpStatus, String>, SubmitMoveRequestDTO> validateSubmitMoveRequest(
+            SubmitMoveRequestDTO request,
+            UUID boardId
+    ) {
+        Either<Pair<HttpStatus, String>, UUID> errorOrAuthenticatedPlayerId =
+                validateSecretAndReturnPlayerId(request.getApiSecret());
+        if (errorOrAuthenticatedPlayerId.isLeft()) return Either.left(errorOrAuthenticatedPlayerId.getLeft());
+
+        Either<Pair<HttpStatus, String>, UUID> errorOrAuthorizedBoardId =
+                validateIfPlayerOnBoardAndReturnBoardId(errorOrAuthenticatedPlayerId.get(), boardId);
+        if (errorOrAuthorizedBoardId.isLeft()) return Either.left(errorOrAuthorizedBoardId.getLeft());
+
+        Board board = dataManager.findBoardById(errorOrAuthorizedBoardId.get()).orElseThrow();
+        if (!errorOrAuthenticatedPlayerId.get().equals(
+                board.isNorthTurn() ? board.getNorthPlayer().getId() : board.getSouthPlayer().getId()
+        )) {
+            return Either.left(Pair.of(BAD_REQUEST, "It's not your move, please wait for opponent's move"));
         }
+
+        List<Pit> pits = board.getNorthPlayer().getId().equals(errorOrAuthenticatedPlayerId.get()) ?
+                board.getNorthPits() : board.getSouthPits();
+        if (!listAvailableMoveIndexes(pits).contains(request.getMove())) {
+            return Either.left(Pair.of(BAD_REQUEST, "Move is not valid"));
+        }
+
+        return Either.right(request);
     }
 
     private Either<Pair<HttpStatus, String>, UUID> validateSecretAndReturnPlayerId(String apiSecret) {
@@ -70,5 +106,13 @@ public class ValidationServiceImpl implements ValidationService {
             return Either.left(Pair.of(UNAUTHORIZED, INVALID_SECRET_ERROR));
         }
         return Either.right(UUID.fromString(userIdRaw));
+    }
+
+    private Either<Pair<HttpStatus, String>, UUID> validateIfPlayerOnBoardAndReturnBoardId(UUID playerId, UUID boardId) {
+        if (dataManager.listBoardIdsByPlayerId(playerId).contains(boardId)) {
+            return Either.right(boardId);
+        } else {
+            return Either.left(Pair.of(NOT_FOUND, "Board not found"));
+        }
     }
 }

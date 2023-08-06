@@ -4,6 +4,8 @@ import dev.ivsan.bolassessment.dto.GetBoardRequestDTO;
 import dev.ivsan.bolassessment.dto.GetBoardResponseDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsResponseDTO;
+import dev.ivsan.bolassessment.dto.SubmitMoveRequestDTO;
+import dev.ivsan.bolassessment.dto.SubmitMoveResponseDTO;
 import dev.ivsan.bolassessment.service.BoardManagerImpl;
 import dev.ivsan.bolassessment.service.ValidationService;
 import io.github.resilience4j.core.functions.Either;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -83,6 +86,32 @@ public class BoardsController {
             LOG.error("Get board request unsuccessful, internal error", ex);
             return new ResponseEntity<>(
                     new GetBoardResponseDTO("Internal server error, please try again later"),
+                    INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    @PostMapping("/boards/{id}/moves")
+    @Operation(summary = "Submit your move for the board.")
+    public ResponseEntity<SubmitMoveResponseDTO> submitMove(
+            @RequestBody SubmitMoveRequestDTO request,
+            @PathVariable("id") UUID boardId
+    ) {
+        LOG.info("New '/boards/{}/moves' POST request with the request body: {}", boardId, request);
+        try {
+            Either<Pair<HttpStatus, String>, SubmitMoveRequestDTO> errorOrRequest =
+                    validationService.validateSubmitMoveRequest(request, boardId);
+            if (errorOrRequest.isLeft()) {
+                SubmitMoveResponseDTO response = new SubmitMoveResponseDTO(errorOrRequest.getLeft().getRight());
+                LOG.warn("Submit move request invalid: {}", response);
+                return new ResponseEntity<>(response, errorOrRequest.getLeft().getLeft());
+            }
+            // TODO submit move logic
+            return new ResponseEntity<>(new SubmitMoveResponseDTO(), OK);
+        } catch (Exception ex) {
+            LOG.error("Submit move request unsuccessful, internal error", ex);
+            return new ResponseEntity<>(
+                    new SubmitMoveResponseDTO("Internal server error, please try again later"),
                     INTERNAL_SERVER_ERROR
             );
         }
