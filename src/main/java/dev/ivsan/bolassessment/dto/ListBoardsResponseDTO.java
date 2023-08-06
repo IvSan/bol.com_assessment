@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -13,15 +13,15 @@ import java.util.List;
 public class ListBoardsResponseDTO {
 
     @Schema(description = "Boards that still in play")
-    private List<BoardResponseDTO> ongoing;
+    private Set<BoardResponseDTO> ongoing;
 
     @Schema(description = "Archive of completed boards")
-    private List<BoardResponseDTO> completed;
+    private Set<BoardResponseDTO> completed;
 
     @Schema(description = "Error details in case of unsuccessful request")
     private String error;
 
-    public ListBoardsResponseDTO(List<BoardResponseDTO> ongoing, List<BoardResponseDTO> completed) {
+    public ListBoardsResponseDTO(Set<BoardResponseDTO> ongoing, Set<BoardResponseDTO> completed) {
         this.ongoing = ongoing;
         this.completed = completed;
     }

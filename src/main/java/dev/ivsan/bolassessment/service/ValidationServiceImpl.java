@@ -30,7 +30,7 @@ public class ValidationServiceImpl implements ValidationService {
     private static final int API_SECRET_LENGTH = 53;
     private static final int UUID_LENGTH = 36;
     private static final String UUID_REGEX = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
-    private static final String INVALID_SECRET_ERROR = "Invalid api secret, please login again and use the obtained " +
+    public static final String INVALID_SECRET_ERROR = "Invalid api secret, please login again and use the obtained " +
             "api secret for every other request";
 
     @Override

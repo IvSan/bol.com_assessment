@@ -4,6 +4,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.UUID;
+
 import static dev.ivsan.bolassessment.utils.TestConstants.URL_BOARDS;
 import static dev.ivsan.bolassessment.utils.TestConstants.URL_ENROLL;
 import static dev.ivsan.bolassessment.utils.TestConstants.URL_LOGIN;
@@ -24,6 +26,12 @@ public class HttpRequestGenerator {
     public static RequestBuilder getBoardsRequest(String apiSecret) {
         return MockMvcRequestBuilders.get(URL_BOARDS)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"apiSecret\":\"" + apiSecret + "\",\"includeCompleted\":true}");
+                .content("{\"apiSecret\":\"" + apiSecret + "\",\"includeCompleted\":true,\"includeTextRepresentation\":true}");
+    }
+
+    public static RequestBuilder getBoardRequest(String apiSecret, UUID boardId) {
+        return MockMvcRequestBuilders.get(URL_BOARDS + "/" + boardId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"apiSecret\":\"" + apiSecret + "\",\"includeTextRepresentation\":true}");
     }
 }

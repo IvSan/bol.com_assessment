@@ -18,9 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -80,22 +80,22 @@ public class BoardManagerImpl implements BoardManager {
     @Override
     public ListBoardsResponseDTO listBoards(ListBoardsRequestDTO request) {
         Player playerToRespond = dataManager.findPlayerById(getPlayerIdFromSecret(request.getApiSecret())).orElseThrow();
-        List<Board> boards = dataManager.listBoardIdsByPlayerId(playerToRespond.getId()).stream()
+        Set<Board> boards = dataManager.listBoardIdsByPlayerId(playerToRespond.getId()).stream()
                 .map(id -> dataManager.findBoardById(id))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .toList();
-        List<BoardResponseDTO> ongoingBoards = filterAndMapBoardsToBoardResponseDTO(boards,
+                .collect(Collectors.toSet());
+        Set<BoardResponseDTO> ongoingBoards = filterAndMapBoardsToBoardResponseDTO(boards,
                 board -> GameState.IN_PROGRESS == board.getState(), playerToRespond, request.isIncludeTextRepresentation());
-        List<BoardResponseDTO> completedBoards = request.isIncludeCompleted() ?
+        Set<BoardResponseDTO> completedBoards = request.isIncludeCompleted() ?
                 filterAndMapBoardsToBoardResponseDTO(
                         boards, board -> GameState.IN_PROGRESS != board.getState(), playerToRespond, request.isIncludeTextRepresentation()
                 ) : null;
         return new ListBoardsResponseDTO(ongoingBoards, completedBoards);
     }
 
-    private List<BoardResponseDTO> filterAndMapBoardsToBoardResponseDTO(
-            List<Board> boards,
+    private Set<BoardResponseDTO> filterAndMapBoardsToBoardResponseDTO(
+            Set<Board> boards,
             Predicate<Board> filter,
             Player playerToRespond,
             boolean includeTextRepresentation
@@ -103,7 +103,7 @@ public class BoardManagerImpl implements BoardManager {
         return boards.stream()
                 .filter(filter)
                 .map(board -> generateBoardResponseDtoForPlayer(board, playerToRespond, includeTextRepresentation))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     @Override

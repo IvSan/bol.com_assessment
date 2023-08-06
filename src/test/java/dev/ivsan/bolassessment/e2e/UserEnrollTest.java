@@ -1,4 +1,4 @@
-package dev.ivsan.bolassessment.integration;
+package dev.ivsan.bolassessment.e2e;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ivsan.bolassessment.dto.PlayerLoginResponseDTO;
@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static dev.ivsan.bolassessment.service.ValidationServiceImpl.INVALID_SECRET_ERROR;
 import static dev.ivsan.bolassessment.utils.ApiSecretUtils.getPlayerIdFromSecret;
 import static dev.ivsan.bolassessment.utils.HttpRequestGenerator.enrollRequest;
 import static dev.ivsan.bolassessment.utils.HttpRequestGenerator.loginRequest;
@@ -74,14 +75,23 @@ public class UserEnrollTest {
         assertEquals(1, dataManager.listBoardIdsByPlayerId(aliceId).size());
     }
 
+    @Test
+    public void shouldNotEnrollWithInvalidApiSecret() throws Exception {
+        String bobEnrollResult = mockMvc.perform(enrollRequest("invalid"))
+                .andExpect(status().isUnauthorized())
+                .andReturn().getResponse().getContentAsString();
+        assertEquals(
+                "{\"error\":\"" + INVALID_SECRET_ERROR + "\"}",
+                bobEnrollResult
+        );
+    }
+
     public static PlayerLoginResponseDTO loginAndEnroll(MockMvc mockMvc, ObjectMapper mapper, String nickname) throws Exception {
-        String loginRaw = mockMvc.perform(loginRequest("Bob"))
+        String loginRaw = mockMvc.perform(loginRequest(nickname))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
         PlayerLoginResponseDTO login = mapper.readValue(loginRaw, PlayerLoginResponseDTO.class);
         mockMvc.perform(enrollRequest(login.getApiSecret())).andExpect(status().isOk()).andReturn();
         return login;
     }
-
-    // TODO Negative tests
 }

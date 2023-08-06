@@ -1,4 +1,4 @@
-package dev.ivsan.bolassessment.integration;
+package dev.ivsan.bolassessment.e2e;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
