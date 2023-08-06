@@ -6,6 +6,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.UUID;
 
+import static dev.ivsan.bolassessment.utils.TestConstants.PATH_MOVES;
 import static dev.ivsan.bolassessment.utils.TestConstants.URL_BOARDS;
 import static dev.ivsan.bolassessment.utils.TestConstants.URL_ENROLL;
 import static dev.ivsan.bolassessment.utils.TestConstants.URL_LOGIN;
@@ -33,5 +34,11 @@ public class HttpRequestGenerator {
         return MockMvcRequestBuilders.get(URL_BOARDS + "/" + boardId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"apiSecret\":\"" + apiSecret + "\",\"includeTextRepresentation\":true}");
+    }
+
+    public static RequestBuilder submitMoveRequest(String apiSecret, UUID boardId, int move) {
+        return MockMvcRequestBuilders.post(URL_BOARDS + "/" + boardId + PATH_MOVES)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"apiSecret\":\"" + apiSecret + "\",\"move\":" + move + "}");
     }
 }
