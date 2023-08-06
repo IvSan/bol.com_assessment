@@ -11,6 +11,8 @@ import static dev.ivsan.bolassessment.utils.BoardUtils.BOARD_PITS_LENGTH;
 import static dev.ivsan.bolassessment.utils.BoardUtils.PIT_STARTING_STONES;
 import static dev.ivsan.bolassessment.utils.BoardUtils.encodeBoardState;
 import static dev.ivsan.bolassessment.utils.BoardUtils.getVisualRepresentation;
+import static dev.ivsan.bolassessment.utils.BoardUtils.initialPitsSetup;
+import static dev.ivsan.bolassessment.utils.BoardUtils.listAvailableMoveIndexes;
 import static dev.ivsan.bolassessment.utils.TestDataGenerator.aBoard;
 import static dev.ivsan.bolassessment.utils.TestDataGenerator.aPlayer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +38,11 @@ class BoardUtilsTest {
     void shouldEncodeBoardStateIntoString() {
         Board board = aBoard();
         assertEquals("1-6.6.6.6.6.6.0.-6.6.6.6.6.6.0.", encodeBoardState(board));
+    }
+
+    @Test
+    void shouldListAvailableMoveIndexes() {
+        assertEquals(List.of(0, 1, 2, 3, 4, 5), listAvailableMoveIndexes(initialPitsSetup()));
     }
 
     @Test
