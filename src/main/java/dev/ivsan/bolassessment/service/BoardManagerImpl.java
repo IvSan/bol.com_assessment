@@ -7,6 +7,8 @@ import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsResponseDTO;
 import dev.ivsan.bolassessment.dto.PlayerEnrollRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerEnrollResponseDTO;
+import dev.ivsan.bolassessment.dto.SubmitMoveRequestDTO;
+import dev.ivsan.bolassessment.dto.SubmitMoveResponseDTO;
 import dev.ivsan.bolassessment.model.Board;
 import dev.ivsan.bolassessment.model.GameState;
 import dev.ivsan.bolassessment.model.Player;
@@ -21,6 +23,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -34,23 +37,24 @@ public class BoardManagerImpl implements BoardManager {
     @Autowired
     DataManager dataManager;
 
+    @Autowired
+    KalahaGameEngine kalahaGameEngine;
+
     private final Random random = new Random();
-    private final ConcurrentHashMap<UUID, Player> enrolledPlayers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<UUID, Player> enrolledPlayers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<UUID, Object> boardsUpdateLocks = new ConcurrentHashMap<>();
+
     private final static Logger LOG = LoggerFactory.getLogger(BoardManagerImpl.class);
 
     @Override
     public PlayerEnrollResponseDTO enrollInGame(PlayerEnrollRequestDTO request) {
         Player playerToEnroll = dataManager.findPlayerById(getPlayerIdFromSecret(request.getApiSecret())).orElseThrow();
-        enrollPlayer(playerToEnroll);
-        return new PlayerEnrollResponseDTO();
-    }
-
-    private void enrollPlayer(Player player) {
-        boolean isPlayerAddedToWaitingList = enrolledPlayers.putIfAbsent(player.getId(), player) == null;
+        boolean isPlayerAddedToWaitingList = enrolledPlayers.putIfAbsent(playerToEnroll.getId(), playerToEnroll) == null;
         if (isPlayerAddedToWaitingList) {
-            LOG.info("{} has been enrolled into a new game", player);
+            LOG.info("{} has been enrolled into a new game", playerToEnroll);
         }
         startGameIfPossible();
+        return new PlayerEnrollResponseDTO();
     }
 
     private synchronized void startGameIfPossible() {
@@ -109,5 +113,24 @@ public class BoardManagerImpl implements BoardManager {
         return new GetBoardResponseDTO(
                 generateBoardResponseDtoForPlayer(board, playerToRespond, request.isIncludeTextRepresentation())
         );
+    }
+
+    @Override
+    public SubmitMoveResponseDTO submitMove(SubmitMoveRequestDTO request, UUID boardId) {
+        Player playerToRespond = dataManager.findPlayerById(getPlayerIdFromSecret(request.getApiSecret())).orElseThrow();
+
+        Object lock = boardsUpdateLocks.computeIfAbsent(boardId, key -> new Object());
+        synchronized (lock) {
+            try {
+                Board board = dataManager.findBoardById(boardId).orElseThrow();
+                board = kalahaGameEngine.processMove(board, request.getMove());
+                dataManager.saveBoard(board);
+                return new SubmitMoveResponseDTO(
+                        generateBoardResponseDtoForPlayer(board, playerToRespond, request.isIncludeTextRepresentation())
+                );
+            } finally {
+                boardsUpdateLocks.remove(boardId, lock);
+            }
+        }
     }
 }

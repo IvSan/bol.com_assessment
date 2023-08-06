@@ -106,8 +106,9 @@ public class BoardsController {
                 LOG.warn("Submit move request invalid: {}", response);
                 return new ResponseEntity<>(response, errorOrRequest.getLeft().getLeft());
             }
-            // TODO submit move logic
-            return new ResponseEntity<>(new SubmitMoveResponseDTO(), OK);
+            SubmitMoveResponseDTO response = boardManager.submitMove(errorOrRequest.get(), boardId);
+            LOG.info("Submit move request completed successfully: {}", response);
+            return new ResponseEntity<>(response, OK);
         } catch (Exception ex) {
             LOG.error("Submit move request unsuccessful, internal error", ex);
             return new ResponseEntity<>(

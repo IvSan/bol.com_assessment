@@ -6,6 +6,8 @@ import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsResponseDTO;
 import dev.ivsan.bolassessment.dto.PlayerEnrollRequestDTO;
 import dev.ivsan.bolassessment.dto.PlayerEnrollResponseDTO;
+import dev.ivsan.bolassessment.dto.SubmitMoveRequestDTO;
+import dev.ivsan.bolassessment.dto.SubmitMoveResponseDTO;
 
 import java.util.UUID;
 
@@ -15,4 +17,6 @@ public interface BoardManager {
     ListBoardsResponseDTO listBoards(ListBoardsRequestDTO request);
 
     GetBoardResponseDTO getBoard(GetBoardRequestDTO request, UUID boardId);
+
+    SubmitMoveResponseDTO submitMove(SubmitMoveRequestDTO request, UUID boardId);
 }

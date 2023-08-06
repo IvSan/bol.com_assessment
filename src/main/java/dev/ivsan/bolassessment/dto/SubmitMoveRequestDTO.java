@@ -34,6 +34,8 @@ public class SubmitMoveRequestDTO {
     )
     private boolean includeTextRepresentation;
 
+    // TODO Idempotency key
+
     @ToString.Include
     private String maskedApiSecret() {
         return maskSecret(apiSecret);
