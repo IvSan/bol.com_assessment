@@ -33,10 +33,15 @@ public record BoardResponseDTO(
         GameState state,
         @Schema(description = "History log of all moves")
         List<Integer> moveLog,
-        @Schema(description = "Text representation of the board at given moment, can be used in consoles for example")
+        @Schema(description = "Text representation of the board at given moment, it can provide a quick and easily " +
+                "interpretable way of displaying the game state.")
         String textRepresentation
 ) {
-    public static BoardResponseDTO generateBoardResponseDtoForPlayer(Board board, Player adoptForPlayer) {
+    public static BoardResponseDTO generateBoardResponseDtoForPlayer(
+            Board board,
+            Player adoptForPlayer,
+            boolean includeTextRepresentation
+    ) {
         boolean isResponseOwnerNorthPlayer = board.getNorthPlayer().getId().equals(adoptForPlayer.getId());
         boolean isResponseOwnerTurn = isResponseOwnerNorthPlayer ^ !board.isNorthTurn();
         return new BoardResponseDTO(
@@ -51,7 +56,7 @@ public record BoardResponseDTO(
                 isResponseOwnerNorthPlayer ? board.getSouthPits() : board.getNorthPits(),
                 board.getState(),
                 board.getMoveLog(),
-                getVisualRepresentation(board)
+                includeTextRepresentation ? getVisualRepresentation(board) : null
         );
     }
 

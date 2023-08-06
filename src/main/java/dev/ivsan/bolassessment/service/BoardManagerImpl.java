@@ -82,16 +82,23 @@ public class BoardManagerImpl implements BoardManager {
                 .map(Optional::get)
                 .toList();
         List<BoardResponseDTO> ongoingBoards = filterAndMapBoardsToBoardResponseDTO(boards,
-                board -> GameState.IN_PROGRESS == board.getState(), playerToRespond);
+                board -> GameState.IN_PROGRESS == board.getState(), playerToRespond, request.isIncludeTextRepresentation());
         List<BoardResponseDTO> completedBoards = request.isIncludeCompleted() ?
-                filterAndMapBoardsToBoardResponseDTO(boards, board -> GameState.IN_PROGRESS != board.getState(), playerToRespond) :
-                null;
+                filterAndMapBoardsToBoardResponseDTO(
+                        boards, board -> GameState.IN_PROGRESS != board.getState(), playerToRespond, request.isIncludeTextRepresentation()
+                ) : null;
         return new ListBoardsResponseDTO(ongoingBoards, completedBoards);
     }
 
-    private List<BoardResponseDTO> filterAndMapBoardsToBoardResponseDTO(List<Board> boards, Predicate<Board> filter,
-            Player playerToRespond) {
-        return boards.stream().filter(filter).map(board -> generateBoardResponseDtoForPlayer(board, playerToRespond))
+    private List<BoardResponseDTO> filterAndMapBoardsToBoardResponseDTO(
+            List<Board> boards,
+            Predicate<Board> filter,
+            Player playerToRespond,
+            boolean includeTextRepresentation
+    ) {
+        return boards.stream()
+                .filter(filter)
+                .map(board -> generateBoardResponseDtoForPlayer(board, playerToRespond, includeTextRepresentation))
                 .collect(Collectors.toList());
     }
 
@@ -99,6 +106,8 @@ public class BoardManagerImpl implements BoardManager {
     public GetBoardResponseDTO getBoard(GetBoardRequestDTO request, UUID boardId) {
         Board board = dataManager.findBoardById(boardId).orElseThrow();
         Player playerToRespond = dataManager.findPlayerById(getPlayerIdFromSecret(request.getApiSecret())).orElseThrow();
-        return new GetBoardResponseDTO(generateBoardResponseDtoForPlayer(board, playerToRespond));
+        return new GetBoardResponseDTO(
+                generateBoardResponseDtoForPlayer(board, playerToRespond, request.isIncludeTextRepresentation())
+        );
     }
 }

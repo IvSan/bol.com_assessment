@@ -14,10 +14,16 @@ import static dev.ivsan.bolassessment.utils.ApiSecretUtils.maskSecret;
 public class GetBoardRequestDTO {
     @ToString.Exclude
     @Schema(
-            description = "Use your secret obtained on login step",
+            description = "Mandatory, please use your secret obtained on login step",
             example = "cd965770-eca7-4931-9fc9-de47c6463683-3fef2f3b8a52f079"
     )
     private String apiSecret;
+
+    @Schema(
+            description = "Determines whether or not to include a text-based representation of the game state",
+            example = "false"
+    )
+    private boolean includeTextRepresentation;
 
     @ToString.Include
     private String maskedApiSecret() {
