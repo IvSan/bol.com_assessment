@@ -1,5 +1,6 @@
 package dev.ivsan.bolassessment.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.ToString;
@@ -30,6 +31,13 @@ public class PlayerLoginResponseDTO {
     public PlayerLoginResponseDTO(String nickname, UUID id, String secret) {
         this.nickname = nickname;
         this.apiSecret = mergePlayerIdAndSecret(id, secret);
+    }
+
+    @JsonCreator
+    public PlayerLoginResponseDTO(String nickname, String apiSecret, String error) {
+        this.nickname = nickname;
+        this.apiSecret = apiSecret;
+        this.error = error;
     }
 
     public PlayerLoginResponseDTO(String error) {

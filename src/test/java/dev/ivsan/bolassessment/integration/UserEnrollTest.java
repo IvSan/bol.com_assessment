@@ -1,7 +1,7 @@
 package dev.ivsan.bolassessment.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.ivsan.bolassessment.dto.LoginResponse;
+import dev.ivsan.bolassessment.dto.PlayerLoginResponseDTO;
 import dev.ivsan.bolassessment.service.DataManager;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +41,7 @@ public class UserEnrollTest {
         String loginRaw = mockMvc.perform(loginRequest("Bob"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        LoginResponse login = mapper.readValue(loginRaw, LoginResponse.class);
+        PlayerLoginResponseDTO login = mapper.readValue(loginRaw, PlayerLoginResponseDTO.class);
 
         mockMvc.perform(enrollRequest(login.getApiSecret())).andExpect(status().isOk()).andReturn();
     }
@@ -51,7 +51,7 @@ public class UserEnrollTest {
         String loginRaw = mockMvc.perform(loginRequest("Bob"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        LoginResponse login = mapper.readValue(loginRaw, LoginResponse.class);
+        PlayerLoginResponseDTO login = mapper.readValue(loginRaw, PlayerLoginResponseDTO.class);
 
         // enroll twice
         mockMvc.perform(enrollRequest(login.getApiSecret())).andExpect(status().isOk()).andReturn();
@@ -64,8 +64,8 @@ public class UserEnrollTest {
 
     @Test
     public void shouldStartGameForTwoEnrolledPlayers() throws Exception {
-        LoginResponse bob = loginAndEnroll(mockMvc, mapper, "Bob");
-        LoginResponse alice = loginAndEnroll(mockMvc, mapper, "Alice");
+        PlayerLoginResponseDTO bob = loginAndEnroll(mockMvc, mapper, "Bob");
+        PlayerLoginResponseDTO alice = loginAndEnroll(mockMvc, mapper, "Alice");
 
         UUID bobId = getPlayerIdFromSecret(bob.getApiSecret());
         assertEquals(1, dataManager.listBoardIdsByPlayerId(bobId).size());
@@ -74,11 +74,11 @@ public class UserEnrollTest {
         assertEquals(1, dataManager.listBoardIdsByPlayerId(aliceId).size());
     }
 
-    public static LoginResponse loginAndEnroll(MockMvc mockMvc, ObjectMapper mapper, String nickname) throws Exception {
+    public static PlayerLoginResponseDTO loginAndEnroll(MockMvc mockMvc, ObjectMapper mapper, String nickname) throws Exception {
         String loginRaw = mockMvc.perform(loginRequest("Bob"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        LoginResponse login = mapper.readValue(loginRaw, LoginResponse.class);
+        PlayerLoginResponseDTO login = mapper.readValue(loginRaw, PlayerLoginResponseDTO.class);
         mockMvc.perform(enrollRequest(login.getApiSecret())).andExpect(status().isOk()).andReturn();
         return login;
     }

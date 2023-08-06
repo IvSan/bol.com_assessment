@@ -2,7 +2,7 @@ package dev.ivsan.bolassessment.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ivsan.bolassessment.dto.ListBoardsResponseDTO;
-import dev.ivsan.bolassessment.dto.LoginResponse;
+import dev.ivsan.bolassessment.dto.PlayerLoginResponseDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,9 @@ public class ListBoardsTest {
     private ObjectMapper mapper;
 
     @Test
-    public void shouldStartGameForTwoEnrolledPlayers() throws Exception {
-        LoginResponse bob = loginAndEnroll(mockMvc, mapper, "Bob");
-        LoginResponse alice = loginAndEnroll(mockMvc, mapper, "Alice");
+    public void shouldListBoardsForPlayer() throws Exception {
+        PlayerLoginResponseDTO bob = loginAndEnroll(mockMvc, mapper, "Bob");
+        PlayerLoginResponseDTO alice = loginAndEnroll(mockMvc, mapper, "Alice");
 
         String boardsResponseRaw = mockMvc.perform(getBoardsRequest(bob.getApiSecret()))
                 .andExpect(status().isOk())
