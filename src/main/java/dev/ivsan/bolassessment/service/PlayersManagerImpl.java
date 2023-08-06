@@ -12,6 +12,10 @@ public class PlayersManagerImpl implements PlayersManager {
     @Autowired
     DataManager dataManager;
 
+    public PlayersManagerImpl(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
+
     @Override
     public PlayerLoginResponseDTO createPlayer(PlayerLoginRequestDTO request) {
         Player player = dataManager.savePlayer(new Player(request.getNickname()));
