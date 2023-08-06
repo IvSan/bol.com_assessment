@@ -40,6 +40,11 @@ public class BoardManagerImpl implements BoardManager {
     @Autowired
     KalahaGameEngine kalahaGameEngine;
 
+    public BoardManagerImpl(DataManager dataManager, KalahaGameEngine kalahaGameEngine) {
+        this.dataManager = dataManager;
+        this.kalahaGameEngine = kalahaGameEngine;
+    }
+
     private final Random random = new Random();
     private final ConcurrentMap<UUID, Player> enrolledPlayers = new ConcurrentHashMap<>();
     private final ConcurrentMap<UUID, Object> boardsUpdateLocks = new ConcurrentHashMap<>();
