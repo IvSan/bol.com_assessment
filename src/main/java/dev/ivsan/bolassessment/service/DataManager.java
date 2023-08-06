@@ -11,15 +11,15 @@ public interface DataManager {
 
     Player savePlayer(Player player);
 
-    Optional<Player> findPlayerById(UUID id);
+    Optional<Player> findPlayerById(UUID playerId);
 
-    Optional<String> findPlayerSecretByPlayerId(UUID id);
+    Optional<String> findPlayerSecretByPlayerId(UUID playerId);
 
     Boolean isPlayerSecretValid(UUID playerId, String secret);
 
     Board saveBoard(Board board);
 
-    Optional<Board> findBoardById(UUID id);
+    Optional<Board> findBoardById(UUID boardId);
 
-    Set<UUID> listBoardIdsByPlayerId(UUID id);
+    Set<UUID> listBoardIdsByPlayerId(UUID playerId);
 }

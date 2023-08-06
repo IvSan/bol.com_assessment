@@ -37,14 +37,14 @@ public class DataManagerInMemoryImpl implements DataManager {
     }
 
     @Override
-    public Optional<Player> findPlayerById(UUID id) {
-        Optional<String> optional = Optional.ofNullable(players.get(id));
+    public Optional<Player> findPlayerById(UUID playerId) {
+        Optional<String> optional = Optional.ofNullable(players.get(playerId));
         return optional.map(s -> serializationHelper.deserializePlayer(s));
     }
 
     @Override
-    public Optional<String> findPlayerSecretByPlayerId(UUID id) {
-        return Optional.ofNullable(secrets.get(id));
+    public Optional<String> findPlayerSecretByPlayerId(UUID playerId) {
+        return Optional.ofNullable(secrets.get(playerId));
     }
 
     @Override
@@ -61,14 +61,14 @@ public class DataManagerInMemoryImpl implements DataManager {
     }
 
     @Override
-    public Optional<Board> findBoardById(UUID id) {
-        Optional<String> optional = Optional.ofNullable(boards.get(id));
+    public Optional<Board> findBoardById(UUID boardId) {
+        Optional<String> optional = Optional.ofNullable(boards.get(boardId));
         return optional.map(s -> serializationHelper.deserializeBoard(s));
     }
 
     @Override
-    public Set<UUID> listBoardIdsByPlayerId(UUID id) {
-        return playerGamesMap.getOrDefault(id, emptySet());
+    public Set<UUID> listBoardIdsByPlayerId(UUID playerId) {
+        return playerGamesMap.getOrDefault(playerId, emptySet());
     }
 
     private String generateRandomAlphanumeric() {
