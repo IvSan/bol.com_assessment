@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static dev.ivsan.bolassessment.e2e.UserEnrollTest.loginAndEnroll;
+import static dev.ivsan.bolassessment.service.ValidationServiceImpl.INVALID_SECRET_ERROR;
 import static dev.ivsan.bolassessment.utils.ApiSecretUtils.getPlayerIdFromSecret;
 import static dev.ivsan.bolassessment.utils.BoardUtils.getVisualRepresentation;
 import static dev.ivsan.bolassessment.utils.BoardUtils.initialPitsSetup;
@@ -122,5 +123,64 @@ public class GetBoardsTest {
         );
 
         assertEquals(expectedBoard, actualBoard);
+    }
+
+    @Test
+    public void shouldNotListBoardsForPlayerWithInvalidApiSecret() throws Exception {
+        String bobEnrollResult = mockMvc.perform(getBoardsRequest("invalid"))
+                .andExpect(status().isUnauthorized())
+                .andReturn().getResponse().getContentAsString();
+        assertEquals(
+                "{\"error\":\"" + INVALID_SECRET_ERROR + "\"}",
+                bobEnrollResult
+        );
+    }
+
+    @Test
+    public void shouldNotGetBoardByIdForPlayerWithInvalidApiSecret() throws Exception {
+        String bobEnrollResult = mockMvc.perform(getBoardRequest("invalid", UUID.randomUUID()))
+                .andExpect(status().isUnauthorized())
+                .andReturn().getResponse().getContentAsString();
+        assertEquals(
+                "{\"error\":\"" + INVALID_SECRET_ERROR + "\"}",
+                bobEnrollResult
+        );
+    }
+
+    @Test
+    public void shouldNotGetBoardThatDoesNotExist() throws Exception {
+        String bobNickname = "Bob";
+        PlayerLoginResponseDTO bob = loginAndEnroll(mockMvc, mapper, bobNickname);
+
+        String getBoardResult = mockMvc.perform(getBoardRequest(bob.getApiSecret(), UUID.randomUUID()))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse().getContentAsString();
+        assertEquals(
+                "{\"error\":\"Board not found\"}",
+                getBoardResult
+        );
+    }
+
+    @Test
+    public void shouldNotGetBoardThatDoesNotBelongToPlayer() throws Exception {
+        PlayerLoginResponseDTO bob = loginAndEnroll(mockMvc, mapper, "Bob");
+        PlayerLoginResponseDTO alice = loginAndEnroll(mockMvc, mapper, "Alice");
+        PlayerLoginResponseDTO carlos = loginAndEnroll(mockMvc, mapper, "Carlos");
+
+        String bobBoardsResponseRaw = mockMvc.perform(getBoardsRequest(bob.getApiSecret()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        ListBoardsResponseDTO bobBoardsResponse = mapper.readValue(bobBoardsResponseRaw, ListBoardsResponseDTO.class);
+        UUID bobAndAliceBoardId = bobBoardsResponse.getOngoing().iterator().next().id();
+
+        mockMvc.perform(getBoardRequest(bob.getApiSecret(), bobAndAliceBoardId)).andExpect(status().isOk()).andReturn();
+        mockMvc.perform(getBoardRequest(alice.getApiSecret(), bobAndAliceBoardId)).andExpect(status().isOk()).andReturn();
+        String carlosGetBoardResult = mockMvc.perform(getBoardRequest(carlos.getApiSecret(), bobAndAliceBoardId))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse().getContentAsString();
+        assertEquals(
+                "{\"error\":\"Board not found\"}",
+                carlosGetBoardResult
+        );
     }
 }
