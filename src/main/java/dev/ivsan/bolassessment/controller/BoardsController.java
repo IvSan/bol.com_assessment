@@ -65,7 +65,7 @@ public class BoardsController {
     }
 
     @GetMapping("/boards/{id}")
-    @Operation(summary = "List all boards you were involved.")
+    @Operation(summary = "Get one of your boards by id.")
     public ResponseEntity<GetBoardResponseDTO> getBoard(
             @RequestBody GetBoardRequestDTO request,
             @PathVariable("id") UUID boardId
