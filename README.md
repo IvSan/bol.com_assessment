@@ -35,7 +35,7 @@ And description of Kalaha game is following.
 
 # My comments
 
-The game was implemented in a form of web based application with a set of REST endpoints:
+The game was implemented in a form of web application with a set of REST endpoints:
 
 * POST `/login` - to register a new player and obtain `apiSecret` that is needed for any other request to authenticate
   player. While this approach offers a simplified solution to security, it's sufficient for the scope of this demo
