@@ -130,6 +130,7 @@ public class BoardManagerImpl implements BoardManager {
                 Board board = dataManager.findBoardById(boardId).orElseThrow();
                 board = kalahaGameEngine.processMove(board, request.getMove());
                 dataManager.saveBoard(board);
+                LOG.info("New move '{}' has been submitted for the board {}", request.getMove(), board.getId());
                 return new SubmitMoveResponseDTO(
                         generateBoardResponseDtoForPlayer(board, playerToRespond, request.isIncludeTextRepresentation())
                 );
