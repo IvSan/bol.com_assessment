@@ -22,7 +22,7 @@ public class SubmitMoveRequestDTO {
 
     @ToString.Exclude
     @Schema(
-            description = "The index of the pit from which you wish to make a move",
+            description = "The index of the pit from which you wish to make a move, count on your side from left to right",
             example = "1",
             requiredMode = Schema.RequiredMode.REQUIRED
     )
@@ -33,8 +33,6 @@ public class SubmitMoveRequestDTO {
             example = "false"
     )
     private boolean includeTextRepresentation;
-
-    // TODO Idempotency key
 
     @ToString.Include
     private String maskedApiSecret() {

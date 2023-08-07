@@ -11,7 +11,14 @@ import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
+/**
+ * This service validates DTOs from REST endpoints. Each validation method adheres to a uniform pattern: if the request
+ * is valid, it returns an Either right with the original request; if not, it returns an Either left with a recommended
+ * response code and the corresponding error message.
+ */
 public interface ValidationService {
+    // TODO Think about refactoring signatures to generic
+
     Either<Pair<HttpStatus, String>, PlayerLoginRequestDTO> validateLoginRequest(PlayerLoginRequestDTO request);
 
     Either<Pair<HttpStatus, String>, PlayerEnrollRequestDTO> validateEnrollRequest(PlayerEnrollRequestDTO request);

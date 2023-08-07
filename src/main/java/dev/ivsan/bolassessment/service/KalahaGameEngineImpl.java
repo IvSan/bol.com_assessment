@@ -3,6 +3,7 @@ package dev.ivsan.bolassessment.service;
 import dev.ivsan.bolassessment.model.Board;
 import dev.ivsan.bolassessment.model.GameState;
 import dev.ivsan.bolassessment.model.Pit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +12,21 @@ import static dev.ivsan.bolassessment.utils.BoardUtils.BOARD_PITS_LENGTH;
 
 @Service
 public class KalahaGameEngineImpl implements KalahaGameEngine {
+
+    @Autowired
+    SerializationHelper serializationHelper;
+
+    public KalahaGameEngineImpl(SerializationHelper serializationHelper) {
+        this.serializationHelper = serializationHelper;
+    }
+
     @Override
     public Board processMove(Board board, int pitIndex) {
         validateMove(board, pitIndex);
-        makeMove(board, pitIndex);
-        checkForVictory(board);
-        return board;
+        Board mutatedBoard = deepCopy(board);
+        makeMove(mutatedBoard, pitIndex);
+        checkForVictory(mutatedBoard);
+        return mutatedBoard;
     }
 
     private void validateMove(Board board, int pitIndex) {
@@ -90,5 +100,9 @@ public class KalahaGameEngineImpl implements KalahaGameEngine {
 
     private int getScore(List<Pit> pits) {
         return pits.stream().map(Pit::getStones).reduce(0, Integer::sum);
+    }
+
+    private Board deepCopy(Board board) {
+        return serializationHelper.deserializeBoard(serializationHelper.serializeBoard(board));
     }
 }

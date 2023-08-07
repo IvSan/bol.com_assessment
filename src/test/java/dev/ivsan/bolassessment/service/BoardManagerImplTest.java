@@ -1,5 +1,6 @@
 package dev.ivsan.bolassessment.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ivsan.bolassessment.dto.GetBoardRequestDTO;
 import dev.ivsan.bolassessment.dto.GetBoardResponseDTO;
 import dev.ivsan.bolassessment.dto.ListBoardsRequestDTO;
@@ -27,7 +28,10 @@ class BoardManagerImplTest {
 
     private final DataManager dataManager = mock(DataManager.class);
 
-    private final BoardManager boardManager = new BoardManagerImpl(dataManager, new KalahaGameEngineImpl());
+    private final KalahaGameEngine kalahaGameEngine =
+            new KalahaGameEngineImpl(new SerializationHelperImpl(new ObjectMapper()));
+
+    private final BoardManager boardManager = new BoardManagerImpl(dataManager, kalahaGameEngine);
 
     @Test
     void shouldEnrollTwoPlayersIntoNewGame() {
@@ -128,7 +132,7 @@ class BoardManagerImplTest {
         SubmitMoveResponseDTO actualResponse = boardManager.submitMove(request, board.getId());
 
         SubmitMoveResponseDTO expectedResponse = new SubmitMoveResponseDTO(
-                generateBoardResponseDtoForPlayer(board, bob, true)
+                generateBoardResponseDtoForPlayer(kalahaGameEngine.processMove(board, 1), bob, true)
         );
 
         assertEquals(expectedResponse, actualResponse);
