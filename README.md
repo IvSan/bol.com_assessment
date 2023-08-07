@@ -70,3 +70,17 @@ instance, if Alice selects the index `2`, the board's state would transit to the
    some refactoring with generics.
 
 # Test deployment
+
+App is deployed to test environment.  
+You can access Swagger API Documentation with the link:
+[http://164.90.204.12:8081/swagger-ui/index.html#](http://164.90.204.12:8081/swagger-ui/index.html#)  
+Or you can run your own local instance with `docker run ivsan/bol-kalaha`.  
+Or play with running instance with cURL/Postman, for example:
+
+```
+curl --location --request POST 'http://164.90.204.12:8081/api/v1/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "nickname": "Bob"
+}'
+```
