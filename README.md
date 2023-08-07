@@ -35,6 +35,38 @@ And description of Kalaha game is following.
 
 # My comments
 
+The game was implemented in a form of web based application with a set of REST endpoints:
+
+* POST `/login` - to register a new player and obtain `apiSecret` that is needed for any other request to authenticate
+  player. While this approach offers a simplified solution to security, it's sufficient for the scope of this demo
+  project.
+* POST `/enroll` - to register player's intention to play, backend will look for any other enrolled player and start a
+  new game between two.
+* GET `/boards` - to list all the boards a player has participated in, including ongoing and finished games.
+* GET `/boards/id` - to retrieve the status of a specific board, optimizing network traffic when details for just one
+  board are required.
+* POST `/boards/{id}/moves` - to record a player's move on a specified board and return the refreshed board status.
+
+I suppose that this collection of methods provides a solid foundation for creating a prototype application and
+conducting trial games.
+
+Additionally, here's a hint regarding the domain implementation of the board:  
+<img src="img/board_setup_example_0.jpg" alt= “” width="500">  
+To make a move player have to submit the desired pit index, counting from 0 on his own side from left to right. For
+instance, if Alice selects the index `2`, the board's state would transit to the following:  
+<img src="img/board_setup_example_1.jpg" alt= “” width="400">
+
 # TODO list
+
+1) Naturally, any project that advances beyond a demo stage requires robust persistence with a suitable database.
+   I'd personally lean towards Postgres as the gold standard. For now, this prototype retains all data in memory.
+2) I think this task if a perfect candidate for event sourcing architecture, however it's a bit overkill for a demo
+   project.
+3) Consistently polling with GET requests from clients isn't optimal. Introducing webhooks with callbacks to notify the
+   client when it's their turn again would be a more efficient approach.
+4) While doing self-review for the project I realise that according to REST guidelines GET requests should not have
+   body, so I should move `apiSecret` to headers and rest of request params to path variables.
+5) Both controllers and validation service have multiple code pieces following same pattern, should consider applying
+   some refactoring with generics.
 
 # Test deployment
