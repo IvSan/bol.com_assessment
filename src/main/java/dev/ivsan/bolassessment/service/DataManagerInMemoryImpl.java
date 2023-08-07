@@ -18,7 +18,7 @@ import static java.util.Collections.emptySet;
 public class DataManagerInMemoryImpl implements DataManager {
 
     @Autowired
-    SerializationHelper serializationHelper;
+    private final SerializationHelper serializationHelper;
 
     public DataManagerInMemoryImpl(SerializationHelper serializationHelper) {
         this.serializationHelper = serializationHelper;
@@ -39,7 +39,7 @@ public class DataManagerInMemoryImpl implements DataManager {
     @Override
     public Optional<Player> findPlayerById(UUID playerId) {
         Optional<String> optional = Optional.ofNullable(players.get(playerId));
-        return optional.map(s -> serializationHelper.deserializePlayer(s));
+        return optional.map(serializationHelper::deserializePlayer);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DataManagerInMemoryImpl implements DataManager {
     @Override
     public Optional<Board> findBoardById(UUID boardId) {
         Optional<String> optional = Optional.ofNullable(boards.get(boardId));
-        return optional.map(s -> serializationHelper.deserializeBoard(s));
+        return optional.map(serializationHelper::deserializeBoard);
     }
 
     @Override

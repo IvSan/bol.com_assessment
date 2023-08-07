@@ -35,10 +35,10 @@ import static dev.ivsan.bolassessment.utils.ApiSecretUtils.getPlayerIdFromSecret
 public class BoardManagerImpl implements BoardManager {
 
     @Autowired
-    DataManager dataManager;
+    private final DataManager dataManager;
 
     @Autowired
-    KalahaGameEngine kalahaGameEngine;
+    private final KalahaGameEngine kalahaGameEngine;
 
     public BoardManagerImpl(DataManager dataManager, KalahaGameEngine kalahaGameEngine) {
         this.dataManager = dataManager;
@@ -86,7 +86,7 @@ public class BoardManagerImpl implements BoardManager {
     public ListBoardsResponseDTO listBoards(ListBoardsRequestDTO request) {
         Player playerToRespond = dataManager.findPlayerById(getPlayerIdFromSecret(request.getApiSecret())).orElseThrow();
         Set<Board> boards = dataManager.listBoardIdsByPlayerId(playerToRespond.getId()).stream()
-                .map(id -> dataManager.findBoardById(id))
+                .map(dataManager::findBoardById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());

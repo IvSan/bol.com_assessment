@@ -14,7 +14,7 @@ import static dev.ivsan.bolassessment.utils.BoardUtils.BOARD_PITS_LENGTH;
 public class KalahaGameEngineImpl implements KalahaGameEngine {
 
     @Autowired
-    SerializationHelper serializationHelper;
+    private final SerializationHelper serializationHelper;
 
     public KalahaGameEngineImpl(SerializationHelper serializationHelper) {
         this.serializationHelper = serializationHelper;

@@ -3,7 +3,7 @@ package dev.ivsan.bolassessment.utils;
 import java.util.UUID;
 
 public class ApiSecretUtils {
-    public static String TAILING_MASK = "****************";
+    public static final String TAILING_MASK = "****************";
 
     public static String mergePlayerIdAndSecret(UUID playerId, String secret) {
         return String.format("%s-%s", playerId.toString(), secret);

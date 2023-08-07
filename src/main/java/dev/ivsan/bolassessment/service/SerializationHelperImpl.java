@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class SerializationHelperImpl implements SerializationHelper {
 
     @Autowired
-    ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public SerializationHelperImpl(ObjectMapper mapper) {
         this.mapper = mapper;

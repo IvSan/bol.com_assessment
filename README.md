@@ -17,12 +17,12 @@ However, feel free to make it as fancy as you want, if you want to show off a bi
 While making the test please take the following points into consideration:
 
 - Readability and comprehensibility of the code (Clean code)
-- Testing your solution (e.g Unit testing)
+- Testing your solution (e.g. Unit testing)
 - Conscious design/technical decisions
 
 As the purpose of this exercise is to gain insights into how you approach building
 software, we do not need you to deliver a finished product with the complete UI. It
-should be something you feel comfortable presenting to us and you should be able
+should be something you feel comfortable presenting to us, and you should be able
 to explain the choices you've made along the way.
 
 It should take you approximately 6-8 hours to deliver a solution, but feel free to

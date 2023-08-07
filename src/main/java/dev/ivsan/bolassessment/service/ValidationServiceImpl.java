@@ -25,7 +25,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 public class ValidationServiceImpl implements ValidationService {
 
     @Autowired
-    DataManager dataManager;
+    private final DataManager dataManager;
 
     public ValidationServiceImpl(DataManager dataManager) {
         this.dataManager = dataManager;

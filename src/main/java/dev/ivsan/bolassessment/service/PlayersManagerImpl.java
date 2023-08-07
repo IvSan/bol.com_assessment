@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class PlayersManagerImpl implements PlayersManager {
 
     @Autowired
-    DataManager dataManager;
+    private final DataManager dataManager;
 
     public PlayersManagerImpl(DataManager dataManager) {
         this.dataManager = dataManager;
